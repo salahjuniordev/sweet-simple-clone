@@ -12,10 +12,12 @@ function AuthCallback() {
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
-        // Find intended destination or default to admin
-        const searchParams = new URLSearchParams(window.location.search);
-        const next = searchParams.get("next") || "/admin";
-        router.navigate({ to: next });
+        // First account to sign in becomes the admin
+        void supabase.rpc("claim_first_admin").then(() => {
+          const searchParams = new URLSearchParams(window.location.search);
+          const next = searchParams.get("next") || "/admin";
+          router.navigate({ to: next });
+        });
       }
     });
 
