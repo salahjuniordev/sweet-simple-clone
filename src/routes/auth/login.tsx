@@ -26,18 +26,24 @@ function LoginPage() {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast.error(error.message);
-    } else {
-      // First account to sign in becomes the admin
-      const { data: claimed } = await supabase.rpc("claim_first_admin");
-      if (claimed) toast.success("Signed in — you are now the admin");
-      else toast.success("Signed in successfully");
-      router.navigate({ to: redirect || "/" });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        // First account to sign in becomes the admin
+        const { data: claimed } = await supabase.rpc("claim_first_admin");
+        if (claimed) toast.success("Signed in — you are now the admin");
+        else toast.success("Signed in successfully");
+        router.navigate({ to: redirect || "/" });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Network error — please try again");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
 
   const handleGoogleLogin = async () => {
     const result = await lovable.auth.signInWithOAuth("google", {
