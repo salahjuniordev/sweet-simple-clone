@@ -1,11 +1,12 @@
-import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_admin")({
+  ssr: false,
   beforeLoad: async ({ location }) => {
-    const { data: { session } } = await supabase.auth.getSession();
+    const { data: { user } } = await supabase.auth.getUser();
     
-    if (!session) {
+    if (!user) {
       throw redirect({
         to: "/auth/login",
         search: {
@@ -16,12 +17,12 @@ export const Route = createFileRoute("/_admin")({
 
     // Check for admin/editor role
     const { data: hasRole } = await supabase.rpc("has_role", {
-      _user_id: session.user.id,
+      _user_id: user.id,
       _role: "admin",
     });
 
     const { data: hasEditorRole } = await supabase.rpc("has_role", {
-      _user_id: session.user.id,
+      _user_id: user.id,
       _role: "editor",
     });
 
@@ -73,11 +74,11 @@ function AdminLayout() {
 
 function AdminNavLink({ to, label }: { to: string; label: string }) {
   return (
-    <a
-      href={to}
+    <Link
+      to={to}
       className="block px-4 py-2 rounded-lg text-sm font-medium hover:bg-secondary transition-colors"
     >
       {label}
-    </a>
+    </Link>
   );
 }

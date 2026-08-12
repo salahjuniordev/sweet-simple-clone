@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -51,7 +51,7 @@ function StatsCard({ title, value, link }: { title: string; value: number; link:
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        <a href={link} className="text-xs text-brand font-semibold hover:underline mt-2 inline-block">Manage {title.toLowerCase()}</a>
+        <Link to={link} className="text-xs text-brand font-semibold hover:underline mt-2 inline-block">Manage {title.toLowerCase()}</Link>
       </CardContent>
     </Card>
   );
