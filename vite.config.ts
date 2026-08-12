@@ -7,6 +7,10 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
+  // Vercel's build environment is not consistently detected by every CI
+  // integration. Pin the Nitro target so it emits Vercel functions instead of
+  // the Cloudflare fallback used by Lovable hosting.
+  ...(process.env["VERCEL"] ? { nitro: { preset: "vercel" } } : {}),
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
