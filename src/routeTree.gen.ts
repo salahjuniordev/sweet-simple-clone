@@ -28,6 +28,7 @@ import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesSlugRouteImport } from './routes/services.$slug'
 import { Route as WorkIndexRouteImport } from './routes/work.index'
 import { Route as WorkSlugRouteImport } from './routes/work.$slug'
+import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index'
 import { Route as AdminAdminAnalyticsRouteImport } from './routes/_admin/admin.analytics'
 import { Route as AdminAdminBlogRouteImport } from './routes/_admin/admin.blog'
 import { Route as AdminAdminLeadsRouteImport } from './routes/_admin/admin.leads'
@@ -131,6 +132,11 @@ const WorkSlugRoute = WorkSlugRouteImport.update({
   path: '/work/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAdminIndexRoute = AdminAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminAnalyticsRoute = AdminAdminAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
@@ -199,6 +205,7 @@ export interface FileRoutesByFullPath {
   '/admin/signup': typeof AdminAdminSignupRoute
   '/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -209,7 +216,6 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
-  '/admin': typeof AdminAdminRouteWithChildren
   '/auth/callback': typeof AuthCallbackRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/signup': typeof AuthSignupRoute
@@ -227,6 +233,7 @@ export interface FileRoutesByTo {
   '/admin/signup': typeof AdminAdminSignupRoute
   '/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/admin': typeof AdminAdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -257,6 +264,7 @@ export interface FileRoutesById {
   '/_admin/admin/signup': typeof AdminAdminSignupRoute
   '/_admin/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
+  '/_admin/admin/': typeof AdminAdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -287,6 +295,7 @@ export interface FileRouteTypes {
     | '/admin/signup'
     | '/admin/work'
     | '/api/public/sitemap.xml'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -297,7 +306,6 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/thank-you'
-    | '/admin'
     | '/auth/callback'
     | '/auth/login'
     | '/auth/signup'
@@ -315,6 +323,7 @@ export interface FileRouteTypes {
     | '/admin/signup'
     | '/admin/work'
     | '/api/public/sitemap.xml'
+    | '/admin'
   id:
     | '__root__'
     | '/'
@@ -344,6 +353,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/signup'
     | '/_admin/admin/work'
     | '/api/public/sitemap.xml'
+    | '/_admin/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -503,6 +513,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WorkSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/admin/': {
+      id: '/_admin/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminAdminIndexRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/analytics': {
       id: '/_admin/admin/analytics'
       path: '/analytics'
@@ -570,6 +587,7 @@ interface AdminAdminRouteChildren {
   AdminAdminServicesRoute: typeof AdminAdminServicesRoute
   AdminAdminSignupRoute: typeof AdminAdminSignupRoute
   AdminAdminWorkRoute: typeof AdminAdminWorkRoute
+  AdminAdminIndexRoute: typeof AdminAdminIndexRoute
 }
 
 const AdminAdminRouteChildren: AdminAdminRouteChildren = {
@@ -580,6 +598,7 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminServicesRoute: AdminAdminServicesRoute,
   AdminAdminSignupRoute: AdminAdminSignupRoute,
   AdminAdminWorkRoute: AdminAdminWorkRoute,
+  AdminAdminIndexRoute: AdminAdminIndexRoute,
 }
 
 const AdminAdminRouteWithChildren = AdminAdminRoute._addFileChildren(
