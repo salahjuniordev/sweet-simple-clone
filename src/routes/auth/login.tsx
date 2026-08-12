@@ -30,7 +30,10 @@ function LoginPage() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Signed in successfully");
+      // First account to sign in becomes the admin
+      const { data: claimed } = await supabase.rpc("claim_first_admin");
+      if (claimed) toast.success("Signed in — you are now the admin");
+      else toast.success("Signed in successfully");
       router.navigate({ to: redirect || "/" });
     }
     setLoading(false);
