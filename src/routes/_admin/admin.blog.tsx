@@ -49,7 +49,7 @@ function AdminBlog() {
     queryFn: async () => {
       // Note: This requires the profiles table or similar, 
       // but for this demo we'll assume a way to list users or just mock roles
-      const { data, error } = await supabase.from("user_roles").select("*, user:user_id(email)");
+      const { data, error } = await supabase.from("user_roles").select("*");
       if (error) return [];
       return data;
     },
