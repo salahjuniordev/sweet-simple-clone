@@ -1,0 +1,37 @@
+import {
+  Code2,
+  PenTool,
+  Sparkles,
+  LayoutDashboard,
+  Clapperboard,
+  SearchCheck,
+  Wrench,
+  ShieldCheck,
+  Megaphone,
+  PlayCircle,
+  ShoppingCart,
+  Cpu,
+  BarChart3,
+  PenLine,
+  Target,
+  type LucideIcon,
+} from "lucide-react";
+import type { Service } from "./services-data";
+
+export const serviceIcons: Record<Service["icon"], LucideIcon> = {
+  Code2,
+  PenTool,
+  Sparkles,
+  LayoutDashboard,
+  Clapperboard,
+  SearchCheck,
+  Wrench,
+  ShieldCheck,
+  Megaphone,
+  PlayCircle,
+  ShoppingCart,
+  Cpu,
+  BarChart3,
+  PenLine,
+  Target,
+};
