@@ -26,18 +26,24 @@ function LoginPage() {
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      toast.error(error.message);
-    } else {
-      // First account to sign in becomes the admin
-      const { data: claimed } = await supabase.rpc("claim_first_admin");
-      if (claimed) toast.success("Signed in — you are now the admin");
-      else toast.success("Signed in successfully");
-      router.navigate({ to: redirect || "/" });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) {
+        toast.error(error.message);
+      } else {
+        // First account to sign in becomes the admin
+        const { data: claimed } = await supabase.rpc("claim_first_admin");
+        if (claimed) toast.success("Signed in — you are now the admin");
+        else toast.success("Signed in successfully");
+        router.navigate({ to: redirect || "/" });
+      }
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Network error — please try again");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
+
 
   const handleGoogleLogin = async () => {
     const result = await lovable.auth.signInWithOAuth("google", {
@@ -94,9 +100,13 @@ function LoginPage() {
             Google
           </Button>
         </CardContent>
-        <CardFooter className="flex flex-col gap-4 text-sm text-muted-foreground">
+        <CardFooter className="flex flex-col gap-3 text-sm text-muted-foreground">
+          <p>
+            No account yet? <Link to="/auth/signup" className="text-brand font-bold hover:underline">Create one</Link>
+          </p>
           <Link to="/" className="hover:text-brand transition-colors text-xs uppercase tracking-widest font-bold">Back to home</Link>
         </CardFooter>
+
       </Card>
     </div>
   );
