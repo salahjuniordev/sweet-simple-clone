@@ -162,8 +162,6 @@ export type Database = {
         Row: {
           created_at: string | null
           email: string
-          followup_at: string | null
-          followup_notes: string | null
           id: string
           message: string | null
           name: string
@@ -175,8 +173,6 @@ export type Database = {
         Insert: {
           created_at?: string | null
           email: string
-          followup_at?: string | null
-          followup_notes?: string | null
           id?: string
           message?: string | null
           name: string
@@ -188,8 +184,6 @@ export type Database = {
         Update: {
           created_at?: string | null
           email?: string
-          followup_at?: string | null
-          followup_notes?: string | null
           id?: string
           message?: string | null
           name?: string
@@ -197,6 +191,30 @@ export type Database = {
           source?: string | null
           status?: string | null
           tier?: string
+        }
+        Relationships: []
+      }
+      notification_settings: {
+        Row: {
+          created_at: string | null
+          id: string
+          key: string
+          updated_at: string | null
+          value: Json
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          key: string
+          updated_at?: string | null
+          value: Json
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          key?: string
+          updated_at?: string | null
+          value?: Json
         }
         Relationships: []
       }
