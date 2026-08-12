@@ -26,22 +26,14 @@ export const Route = createFileRoute("/_admin")({
     });
 
     if (!hasRole && !hasEditorRole) {
-      // Check if there are ANY admins in the system
-      const { count } = await supabase
-        .from("user_roles")
-        .select("*", { count: "exact", head: true })
-        .eq("role", "admin");
+      // The very first signed-in user automatically becomes admin
+      const { data: claimed } = await supabase.rpc("claim_first_admin");
 
-      if (count === 0) {
-        // If no admins exist, redirect to bootstrap to allow creating the first one
+      if (!claimed) {
         throw redirect({
-          to: "/auth/bootstrap",
+          to: "/",
         });
       }
-
-      throw redirect({
-        to: "/",
-      });
     }
   },
   component: AdminLayout,
