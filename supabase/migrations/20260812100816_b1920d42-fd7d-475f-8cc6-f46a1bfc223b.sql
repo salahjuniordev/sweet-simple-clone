@@ -1,0 +1,2 @@
+delete from public.user_roles where user_id in (select id from auth.users where email in ('owner.check@mariostudio.dev','testuser+ml@example.com'));
+delete from auth.users where email in ('owner.check@mariostudio.dev','testuser+ml@example.com');
