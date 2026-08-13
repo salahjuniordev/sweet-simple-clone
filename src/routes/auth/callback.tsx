@@ -1,6 +1,7 @@
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { claimFirstAdmin } from "@/lib/admin-bootstrap.functions";
 
 export const Route = createFileRoute("/auth/callback")({
   component: AuthCallback,
@@ -13,7 +14,7 @@ function AuthCallback() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         // First account to sign in becomes the admin
-        void supabase.rpc("claim_first_admin").then(() => {
+        void claimFirstAdmin().then(() => {
           const searchParams = new URLSearchParams(window.location.search);
           const next = searchParams.get("next") || "/admin";
           router.navigate({ to: next });

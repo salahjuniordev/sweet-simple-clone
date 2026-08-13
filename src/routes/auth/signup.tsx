@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { claimFirstAdmin } from "@/lib/admin-bootstrap.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -41,7 +42,7 @@ function SignupPage() {
       if (error) {
         toast.error(error.message);
       } else if (data.session) {
-        const { data: claimed } = await supabase.rpc("claim_first_admin");
+        const { claimed } = await claimFirstAdmin();
         toast.success(claimed ? "Account created — you are now the admin" : "Account created");
         router.navigate({ to: "/admin" });
       } else {

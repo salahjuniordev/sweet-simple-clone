@@ -2,6 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
+import { claimFirstAdmin } from "@/lib/admin-bootstrap.functions";
 import { lovable } from "@/integrations/lovable/index";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,7 +33,7 @@ function LoginPage() {
         toast.error(error.message);
       } else {
         // First account to sign in becomes the admin
-        const { data: claimed } = await supabase.rpc("claim_first_admin");
+        const { claimed } = await claimFirstAdmin();
         if (claimed) toast.success("Signed in — you are now the admin");
         else toast.success("Signed in successfully");
         router.navigate({ to: redirect || "/" });

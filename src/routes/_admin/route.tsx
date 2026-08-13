@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { claimFirstAdmin } from "@/lib/admin-bootstrap.functions";
 
 export const Route = createFileRoute("/_admin")({
   ssr: false,
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/_admin")({
 
     if (!hasRole && !hasEditorRole) {
       // The very first signed-in user automatically becomes admin
-      const { data: claimed } = await supabase.rpc("claim_first_admin");
+      const { claimed } = await claimFirstAdmin();
 
       if (!claimed) {
         throw redirect({
