@@ -1,3 +1,3 @@
-export const publicEn = {} as const;
+export const publicEn = {};
 
 export const publicFr: typeof publicEn = {};

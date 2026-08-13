@@ -39,7 +39,7 @@ export const commonEn = {
     terms: "Terms of service",
     builtInHouse: "Built in-house. No vendor lock-in.",
   },
-} as const;
+};
 
 export const commonFr: typeof commonEn = {
   nav: {

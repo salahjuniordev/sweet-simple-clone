@@ -1,3 +1,3 @@
-export const adminEn = {} as const;
+export const adminEn = {};
 
 export const adminFr: typeof adminEn = {};
