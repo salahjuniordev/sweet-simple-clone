@@ -4,39 +4,14 @@ import Autoplay from "embla-carousel-autoplay";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useI18n } from "@/lib/i18n";
 const logoUrl = "/logo.png";
 
-const slides = [
-  {
-    tag: "Digital Studio",
-    title: "Brands built sharp.",
-    subtitle: "Websites built fast.",
-    desc: "Mario Studio is a full-service digital partner: identity, design, development, video and marketing — delivered by one team.",
-    cta: "Get a free brand audit",
-    ctaLink: "/contact",
-    image: logoUrl,
-  },
-  {
-    tag: "UI/UX Design",
-    title: "Interfaces that",
-    subtitle: "drive conversion.",
-    desc: "We build user experiences that don't just look good, they perform. From SaaS platforms to e-commerce storefronts.",
-    cta: "View our process",
-    ctaLink: "/services/ui-ux-design",
-    image: logoUrl,
-  },
-  {
-    tag: "Identity Branding",
-    title: "Symbols that",
-    subtitle: "last a decade.",
-    desc: "Visual identities built to scale. We don't just make logos; we create systems that grow with your business.",
-    cta: "Start your brand",
-    ctaLink: "/services/identity-branding",
-    image: logoUrl,
-  },
-];
+const slideLinks = ["/contact", "/services/ui-ux-design", "/services/identity-branding"];
 
 export function HeroSlider() {
+  const { t } = useI18n();
+  const slides = t.hero.slides.map((slide, i) => ({ ...slide, ctaLink: slideLinks[i], image: logoUrl }));
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 6000, stopOnInteraction: false }),
   ]);
@@ -104,7 +79,7 @@ export function HeroSlider() {
                       to="/services"
                       className="inline-flex items-center rounded-full border border-border px-7 py-3.5 text-sm font-semibold transition-colors hover:border-brand"
                     >
-                      See all services
+                      {t.hero.seeAllServices}
                     </Link>
                   </div>
                 </motion.div>
@@ -138,7 +113,7 @@ export function HeroSlider() {
               className={`h-1.5 transition-all ${
                 selectedIndex === i ? "w-8 bg-brand" : "w-2 bg-muted hover:bg-muted-foreground"
               } rounded-full`}
-              aria-label={`Go to slide ${i + 1}`}
+              aria-label={`${t.hero.goToSlide} ${i + 1}`}
             />
           ))}
         </div>
@@ -146,14 +121,14 @@ export function HeroSlider() {
           <button
             onClick={scrollPrev}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background transition-colors hover:border-brand hover:text-brand"
-            aria-label="Previous slide"
+            aria-label={t.hero.prevSlide}
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button
             onClick={scrollNext}
             className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background transition-colors hover:border-brand hover:text-brand"
-            aria-label="Next slide"
+            aria-label={t.hero.nextSlide}
           >
             <ChevronRight className="h-5 w-5" />
           </button>

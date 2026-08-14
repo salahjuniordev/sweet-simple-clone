@@ -35,6 +35,7 @@ import { toast } from "sonner";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useI18n } from "@/lib/i18n";
 
 const planSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -62,6 +63,7 @@ export const Route = createFileRoute("/_admin/admin/services")({
 });
 
 function AdminServices() {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [editingService, setEditingService] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -87,9 +89,9 @@ function AdminServices() {
       benefits: [""],
       deliverables: [""],
       plans: [
-        { name: "Basic", price: "", note: "Best for small projects", features: [""] },
-        { name: "Starter", price: "", note: "Most popular", features: [""] },
-        { name: "Premium", price: "", note: "Enterprise ready", features: [""] },
+        { name: "Basic", price: "", note: t.admin.services.planBasicNote, features: [""] },
+        { name: "Starter", price: "", note: t.admin.services.planStarterNote, features: [""] },
+        { name: "Premium", price: "", note: t.admin.services.planPremiumNote, features: [""] },
       ],
     },
   });
@@ -118,9 +120,9 @@ function AdminServices() {
         benefits: [""],
         deliverables: [""],
         plans: [
-          { name: "Basic", price: "", note: "Best for small projects", features: [""] },
-          { name: "Starter", price: "", note: "Most popular", features: [""] },
-          { name: "Premium", price: "", note: "Enterprise ready", features: [""] },
+          { name: "Basic", price: "", note: t.admin.services.planBasicNote, features: [""] },
+          { name: "Starter", price: "", note: t.admin.services.planStarterNote, features: [""] },
+          { name: "Premium", price: "", note: t.admin.services.planPremiumNote, features: [""] },
         ],
       });
     }
@@ -141,7 +143,7 @@ function AdminServices() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-services"] });
-      toast.success(editingService ? "Service updated" : "Service created");
+      toast.success(editingService ? t.admin.services.toastUpdated : t.admin.services.toastCreated);
       setIsDialogOpen(false);
       setEditingService(null);
     },
@@ -157,7 +159,7 @@ function AdminServices() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-services"] });
-      toast.success("Service deleted");
+      toast.success(t.admin.services.toastDeleted);
     },
     onError: (error: any) => {
       toast.error(error.message);
@@ -174,8 +176,8 @@ function AdminServices() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black tracking-tight">Services</h1>
-          <p className="text-muted-foreground mt-1">Manage your service offerings and pricing.</p>
+          <h1 className="text-3xl font-black tracking-tight">{t.admin.services.title}</h1>
+          <p className="text-muted-foreground mt-1">{t.admin.services.subtitle}</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={(open) => {
           setIsDialogOpen(open);
@@ -183,14 +185,14 @@ function AdminServices() {
         }}>
           <DialogTrigger asChild>
             <Button className="bg-brand text-brand-foreground font-bold gap-2">
-              <Plus className="h-4 w-4" /> Add Service
+              <Plus className="h-4 w-4" /> {t.admin.services.addService}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingService ? "Edit Service" : "Add New Service"}</DialogTitle>
+              <DialogTitle>{editingService ? t.admin.services.editService : t.admin.services.addNewService}</DialogTitle>
               <DialogDescription>
-                Update service details, benefits, and pricing tiers.
+                {t.admin.services.dialogDesc}
               </DialogDescription>
             </DialogHeader>
 
@@ -202,8 +204,8 @@ function AdminServices() {
                     name="title"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Title</FormLabel>
-                        <FormControl><Input placeholder="Web Development" {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.titleLabel}</FormLabel>
+                        <FormControl><Input placeholder={t.admin.services.titlePlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -213,8 +215,8 @@ function AdminServices() {
                     name="slug"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Slug</FormLabel>
-                        <FormControl><Input placeholder="web-development" {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.slugLabel}</FormLabel>
+                        <FormControl><Input placeholder={t.admin.services.slugPlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -224,8 +226,8 @@ function AdminServices() {
                     name="tagline"
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Tagline</FormLabel>
-                        <FormControl><Input placeholder="Future-proof digital experiences." {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.taglineLabel}</FormLabel>
+                        <FormControl><Input placeholder={t.admin.services.taglinePlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -235,8 +237,8 @@ function AdminServices() {
                     name="desc_short"
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Short Description (SEO)</FormLabel>
-                        <FormControl><Textarea placeholder="Brief summary for cards and SEO..." {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.shortDescLabel}</FormLabel>
+                        <FormControl><Textarea placeholder={t.admin.services.shortDescPlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -246,8 +248,8 @@ function AdminServices() {
                     name="intro"
                     render={({ field }) => (
                       <FormItem className="md:col-span-2">
-                        <FormLabel>Full Intro</FormLabel>
-                        <FormControl><Textarea placeholder="Detailed introduction for the service page..." {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.introLabel}</FormLabel>
+                        <FormControl><Textarea placeholder={t.admin.services.introPlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -257,8 +259,8 @@ function AdminServices() {
                     name="icon"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Icon Name (Lucide)</FormLabel>
-                        <FormControl><Input placeholder="Globe, Palette, Shield..." {...field} /></FormControl>
+                        <FormLabel>{t.admin.services.iconLabel}</FormLabel>
+                        <FormControl><Input placeholder={t.admin.services.iconPlaceholder} {...field} /></FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -266,7 +268,7 @@ function AdminServices() {
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="text-lg font-bold">Pricing Tiers</h3>
+                  <h3 className="text-lg font-bold">{t.admin.services.pricingTiers}</h3>
                   <div className="grid gap-6 md:grid-cols-3">
                     {form.getValues().plans.map((plan, planIdx) => (
                       <div key={planIdx} className="p-4 border rounded-xl bg-muted/30 space-y-4">
@@ -276,8 +278,8 @@ function AdminServices() {
                           name={`plans.${planIdx}.price` as any}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Price</FormLabel>
-                              <FormControl><Input placeholder="From $2,500" {...field} /></FormControl>
+                              <FormLabel>{t.admin.services.priceLabel}</FormLabel>
+                              <FormControl><Input placeholder={t.admin.services.pricePlaceholder} {...field} /></FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
@@ -287,14 +289,14 @@ function AdminServices() {
                           name={`plans.${planIdx}.note` as any}
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Note</FormLabel>
-                              <FormControl><Input placeholder="One-time project" {...field} /></FormControl>
+                              <FormLabel>{t.admin.services.noteLabel}</FormLabel>
+                              <FormControl><Input placeholder={t.admin.services.notePlaceholder} {...field} /></FormControl>
                               <FormMessage />
                             </FormItem>
                           )}
                         />
                         <div className="space-y-2">
-                          <FormLabel>Features</FormLabel>
+                          <FormLabel>{t.admin.services.features}</FormLabel>
                           <FeaturesFieldArray planIdx={planIdx} control={form.control} />
                         </div>
                       </div>
@@ -304,11 +306,11 @@ function AdminServices() {
 
                 <div className="grid gap-6 md:grid-cols-2">
                   <div className="space-y-4">
-                    <h3 className="text-lg font-bold">Benefits</h3>
+                    <h3 className="text-lg font-bold">{t.admin.services.benefits}</h3>
                     <StringListFieldArray name="benefits" control={form.control} />
                   </div>
                   <div className="space-y-4">
-                    <h3 className="text-lg font-bold">Deliverables</h3>
+                    <h3 className="text-lg font-bold">{t.admin.services.deliverables}</h3>
                     <StringListFieldArray name="deliverables" control={form.control} />
                   </div>
                 </div>
@@ -316,7 +318,7 @@ function AdminServices() {
                 <DialogFooter>
                   <Button type="submit" disabled={upsertMutation.isPending} className="bg-brand text-brand-foreground font-bold">
                     {upsertMutation.isPending ? <Loader2 className="animate-spin mr-2" /> : <Save className="mr-2 h-4 w-4" />}
-                    {editingService ? "Save Changes" : "Create Service"}
+                    {editingService ? t.admin.services.saveChanges : t.admin.services.createService}
                   </Button>
                 </DialogFooter>
               </form>
@@ -329,10 +331,10 @@ function AdminServices() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Slug</TableHead>
-              <TableHead>Icon</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.services.tableTitle}</TableHead>
+              <TableHead>{t.admin.services.tableSlug}</TableHead>
+              <TableHead>{t.admin.services.tableIcon}</TableHead>
+              <TableHead className="text-right">{t.admin.services.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -354,7 +356,7 @@ function AdminServices() {
                       size="icon" 
                       className="text-destructive" 
                       onClick={() => {
-                        if (confirm("Delete this service?")) deleteMutation.mutate(s.id);
+                        if (confirm(t.admin.services.confirmDelete)) deleteMutation.mutate(s.id);
                       }}
                     >
                       <Trash2 className="h-4 w-4" />
@@ -371,6 +373,7 @@ function AdminServices() {
 }
 
 function StringListFieldArray({ name, control }: { name: string, control: any }) {
+  const { t } = useI18n();
   const { fields, append, remove } = useFieldArray({
     control,
     name: name as any,
@@ -396,13 +399,14 @@ function StringListFieldArray({ name, control }: { name: string, control: any })
         </div>
       ))}
       <Button type="button" variant="outline" size="sm" className="w-full" onClick={() => append("")}>
-        Add Item
+        {t.admin.common.addItem}
       </Button>
     </div>
   );
 }
 
 function FeaturesFieldArray({ planIdx, control }: { planIdx: number, control: any }) {
+  const { t } = useI18n();
   const { fields, append, remove } = useFieldArray({
     control,
     name: `plans.${planIdx}.features` as any,
@@ -428,7 +432,7 @@ function FeaturesFieldArray({ planIdx, control }: { planIdx: number, control: an
         </div>
       ))}
       <Button type="button" variant="outline" size="sm" className="w-full h-8 text-xs" onClick={() => append("")}>
-        Add Feature
+        {t.admin.services.addFeature}
       </Button>
     </div>
   );

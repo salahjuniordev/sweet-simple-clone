@@ -9,12 +9,14 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_admin/admin/leads")({
   component: AdminLeads,
 });
 
 function AdminLeads() {
+  const { t } = useI18n();
   const [serviceFilter, setServiceFilter] = useState<string>("all");
   const [tierFilter, setTierFilter] = useState<string>("all");
   const [selectedLead, setSelectedLead] = useState<any>(null);
@@ -58,7 +60,7 @@ function AdminLeads() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success(`Status updated to ${status}`);
+      toast.success(t.admin.leads.toastStatusUpdated.replace("{status}", status));
       refetch();
       if (selectedLead?.id === id) {
         setSelectedLead({ ...selectedLead, status });
@@ -67,12 +69,12 @@ function AdminLeads() {
   };
 
   const deleteLead = async (id: string) => {
-    if (!confirm("Are you sure? This action cannot be undone.")) return;
+    if (!confirm(t.admin.leads.confirmDelete)) return;
     const { error } = await supabase.from("lead_submissions").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Lead deleted");
+      toast.success(t.admin.leads.toastDeleted);
       setSelectedLead(null);
       refetch();
     }
@@ -91,8 +93,8 @@ function AdminLeads() {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tight">Leads & Inquiries</h1>
-          <p className="text-muted-foreground mt-1">Manage incoming requests from service pages.</p>
+          <h1 className="text-3xl font-black tracking-tight">{t.admin.leads.title}</h1>
+          <p className="text-muted-foreground mt-1">{t.admin.leads.subtitle}</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
@@ -100,10 +102,10 @@ function AdminLeads() {
             <Filter className="h-4 w-4 text-muted-foreground" />
             <Select value={serviceFilter} onValueChange={setServiceFilter}>
               <SelectTrigger className="w-[180px] bg-background">
-                <SelectValue placeholder="Filter by Service" />
+                <SelectValue placeholder={t.admin.leads.filterByService} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Services</SelectItem>
+                <SelectItem value="all">{t.admin.leads.allServices}</SelectItem>
                 {services?.map((s) => (
                   <SelectItem key={s.slug} value={s.slug}>{s.title}</SelectItem>
                 ))}
@@ -113,13 +115,13 @@ function AdminLeads() {
 
           <Select value={tierFilter} onValueChange={setTierFilter}>
             <SelectTrigger className="w-[150px] bg-background">
-              <SelectValue placeholder="Filter by Tier" />
+              <SelectValue placeholder={t.admin.leads.filterByTier} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Tiers</SelectItem>
-              <SelectItem value="basic">Basic</SelectItem>
-              <SelectItem value="starter">Starter</SelectItem>
-              <SelectItem value="premium">Premium</SelectItem>
+              <SelectItem value="all">{t.admin.leads.allTiers}</SelectItem>
+              <SelectItem value="basic">{t.admin.leads.tierBasic}</SelectItem>
+              <SelectItem value="starter">{t.admin.leads.tierStarter}</SelectItem>
+              <SelectItem value="premium">{t.admin.leads.tierPremium}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -130,7 +132,7 @@ function AdminLeads() {
               onClick={() => { setServiceFilter("all"); setTierFilter("all"); }}
               className="h-9 px-2 lg:px-3"
             >
-              Reset
+              {t.admin.leads.reset}
               <X className="ml-2 h-4 w-4" />
             </Button>
           )}
@@ -141,18 +143,18 @@ function AdminLeads() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Contact</TableHead>
-              <TableHead>Service / Tier</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.leads.tableDate}</TableHead>
+              <TableHead>{t.admin.leads.tableContact}</TableHead>
+              <TableHead>{t.admin.leads.tableServiceTier}</TableHead>
+              <TableHead>{t.admin.leads.tableStatus}</TableHead>
+              <TableHead className="text-right">{t.admin.leads.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredLeads?.map((lead) => (
               <TableRow key={lead.id} className="cursor-pointer hover:bg-muted/50" onClick={() => setSelectedLead(lead)}>
                 <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                  {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : 'N/A'}
+                  {lead.created_at ? new Date(lead.created_at).toLocaleDateString() : t.admin.leads.notAvailable}
                 </TableCell>
                 <TableCell>
                   <div className="font-bold">{lead.name}</div>
@@ -168,20 +170,20 @@ function AdminLeads() {
                 </TableCell>
                 <TableCell>
                   <Badge variant="outline" className={`capitalize ${getStatusColor(lead.status)}`}>
-                    {lead.status || 'new'}
+                    {lead.status || t.admin.leads.statusNew}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                   <div className="flex justify-end gap-1">
-                    <Button variant="ghost" size="icon" onClick={() => setSelectedLead(lead)} title="View Details">
+                    <Button variant="ghost" size="icon" onClick={() => setSelectedLead(lead)} title={t.admin.leads.viewDetails}>
                       <Eye className="h-4 w-4" />
                     </Button>
                     {lead.status !== 'completed' && (
-                      <Button variant="ghost" size="icon" className="text-green-500" onClick={() => updateStatus(lead.id, 'completed')} title="Mark Completed">
+                      <Button variant="ghost" size="icon" className="text-green-500" onClick={() => updateStatus(lead.id, 'completed')} title={t.admin.leads.markCompleted}>
                         <CheckCircle className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteLead(lead.id)} title="Delete Lead">
+                    <Button variant="ghost" size="icon" className="text-destructive" onClick={() => deleteLead(lead.id)} title={t.admin.leads.deleteLead}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -191,7 +193,7 @@ function AdminLeads() {
             {filteredLeads?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-12 text-muted-foreground">
-                  No leads found matching your filters.
+                  {t.admin.leads.noLeads}
                 </TableCell>
               </TableRow>
             )}
@@ -205,10 +207,10 @@ function AdminLeads() {
           <DialogHeader>
             <div className="flex items-center justify-between mb-2">
               <Badge variant="outline" className={`capitalize ${getStatusColor(selectedLead?.status)}`}>
-                {selectedLead?.status || 'new'}
+                {selectedLead?.status || t.admin.leads.statusNew}
               </Badge>
               <span className="text-xs text-muted-foreground">
-                ID: {selectedLead?.id.split('-')[0]}...
+                {t.admin.leads.idLabel}: {selectedLead?.id.split('-')[0]}...
               </span>
             </div>
             <DialogTitle className="text-2xl font-black">{selectedLead?.name}</DialogTitle>
@@ -219,27 +221,27 @@ function AdminLeads() {
 
           <div className="grid grid-cols-2 gap-6 py-4">
             <div className="space-y-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Service Requested</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.admin.leads.serviceRequested}</h4>
               <p className="font-semibold capitalize">{selectedLead?.service_slug.replace(/-/g, ' ')}</p>
             </div>
             <div className="space-y-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Pricing Tier</h4>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.admin.leads.pricingTier}</h4>
               <p className="font-semibold capitalize">{selectedLead?.tier}</p>
             </div>
             <div className="space-y-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Date Submitted</h4>
-              <p className="font-semibold">{selectedLead?.created_at ? new Date(selectedLead.created_at).toLocaleString() : 'N/A'}</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.admin.leads.dateSubmitted}</h4>
+              <p className="font-semibold">{selectedLead?.created_at ? new Date(selectedLead.created_at).toLocaleString() : t.admin.leads.notAvailable}</p>
             </div>
             <div className="space-y-1">
-              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Source</h4>
-              <p className="font-semibold capitalize">{selectedLead?.source || 'Direct'}</p>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.admin.leads.source}</h4>
+              <p className="font-semibold capitalize">{selectedLead?.source || t.admin.leads.direct}</p>
             </div>
           </div>
 
           <div className="space-y-2 border-t pt-4">
-            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Message</h4>
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t.admin.leads.message}</h4>
             <div className="bg-muted/30 rounded-lg p-4 text-sm leading-relaxed whitespace-pre-wrap min-h-[100px]">
-              {selectedLead?.message || "No message provided."}
+              {selectedLead?.message || t.admin.leads.noMessage}
             </div>
           </div>
 
@@ -252,7 +254,7 @@ function AdminLeads() {
                 onClick={() => deleteLead(selectedLead.id)}
               >
                 <Trash2 className="mr-2 h-4 w-4" />
-                Delete
+                {t.admin.leads.delete}
               </Button>
             </div>
             <div className="flex gap-2">
@@ -263,7 +265,7 @@ function AdminLeads() {
                   onClick={() => updateStatus(selectedLead.id, 'contacted')}
                 >
                   <Clock className="mr-2 h-4 w-4" />
-                  Mark Contacted
+                  {t.admin.leads.markContacted}
                 </Button>
               )}
               {selectedLead?.status !== 'completed' && (
@@ -273,7 +275,7 @@ function AdminLeads() {
                   onClick={() => updateStatus(selectedLead.id, 'completed')}
                 >
                   <CheckCircle className="mr-2 h-4 w-4" />
-                  Mark Completed
+                  {t.admin.leads.markCompleted}
                 </Button>
               )}
             </div>

@@ -89,6 +89,7 @@ export const publicEn = {
     noResults: "No services match your search. Try a different keyword.",
     from: "From",
     rights: "All rights reserved.",
+    copyrightPrefix: (year: number) => `© ${year} Mario Studio.`,
   },
   serviceDetail: {
     requestQuote: "Request a quote",
@@ -97,7 +98,7 @@ export const publicEn = {
     pricingA: "Pricing &",
     pricingB: "Scope",
     pricingSub: "Select a tier to view estimated deliverables and get an instant quote request.",
-    packageSuffix: "package",
+    packageTitle: (name: string) => `${name} Package`,
     features: "Features",
     estimatedScope: "Estimated Scope",
     scopeText: (tier: string, service: string, count: number) =>
@@ -115,6 +116,7 @@ export const publicEn = {
     notFoundLink: "Browse all services",
   },
   workPage: {
+    servicesSeparator: " · ",
     eyebrow: "Work",
     titleA: "Projects, and what they",
     titleB: "actually changed",
@@ -241,6 +243,7 @@ export const publicFr: typeof publicEn = {
     noResults: "Aucun service ne correspond à votre recherche. Essayez un autre mot-clé.",
     from: "À partir de",
     rights: "Tous droits réservés.",
+    copyrightPrefix: (year: number) => `© ${year} Mario Studio.`,
   },
   serviceDetail: {
     requestQuote: "Demander un devis",
@@ -249,7 +252,7 @@ export const publicFr: typeof publicEn = {
     pricingA: "Tarifs et",
     pricingB: "périmètre",
     pricingSub: "Sélectionnez un forfait pour voir les livrables estimés et demander un devis immédiat.",
-    packageSuffix: "forfait",
+    packageTitle: (name: string) => `Forfait ${name}`,
     features: "Inclus",
     estimatedScope: "Périmètre estimé",
     scopeText: (tier: string, service: string, count: number) =>
@@ -267,6 +270,7 @@ export const publicFr: typeof publicEn = {
     notFoundLink: "Voir tous les services",
   },
   workPage: {
+    servicesSeparator: " · ",
     eyebrow: "Réalisations",
     titleA: "Nos projets, et ce qu'ils ont",
     titleB: "réellement changé",
