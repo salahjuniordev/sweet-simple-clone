@@ -2,12 +2,14 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_admin/admin/")({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const { t } = useI18n();
   const { data: stats } = useQuery({
     queryKey: ["admin-stats"],
     queryFn: async () => {
@@ -29,21 +31,22 @@ function AdminDashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-3xl font-black tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-2">Welcome to your studio control center.</p>
+        <h1 className="text-3xl font-black tracking-tight">{t.admin.dashboard.title}</h1>
+        <p className="text-muted-foreground mt-2">{t.admin.dashboard.subtitle}</p>
       </div>
 
       <div className="grid gap-6 md:grid-cols-4">
-        <StatsCard title="Services" value={stats?.services || 0} link="/admin/services" />
-        <StatsCard title="Inquiries" value={stats?.leads || 0} link="/admin/leads" />
-        <StatsCard title="Blog Posts" value={stats?.posts || 0} link="/admin/blog" />
-        <StatsCard title="Case Studies" value={stats?.caseStudies || 0} link="/admin/work" />
+        <StatsCard title={t.admin.dashboard.services} value={stats?.services || 0} link="/admin/services" />
+        <StatsCard title={t.admin.dashboard.inquiries} value={stats?.leads || 0} link="/admin/leads" />
+        <StatsCard title={t.admin.dashboard.blogPosts} value={stats?.posts || 0} link="/admin/blog" />
+        <StatsCard title={t.admin.dashboard.caseStudies} value={stats?.caseStudies || 0} link="/admin/work" />
       </div>
     </div>
   );
 }
 
 function StatsCard({ title, value, link }: { title: string; value: number; link: string }) {
+  const { t } = useI18n();
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -51,7 +54,7 @@ function StatsCard({ title, value, link }: { title: string; value: number; link:
       </CardHeader>
       <CardContent>
         <div className="text-2xl font-bold">{value}</div>
-        <Link to={link} className="text-xs text-brand font-semibold hover:underline mt-2 inline-block">Manage {title.toLowerCase()}</Link>
+        <Link to={link} className="text-xs text-brand font-semibold hover:underline mt-2 inline-block">{t.admin.dashboard.manage} {title.toLowerCase()}</Link>
       </CardContent>
     </Card>
   );

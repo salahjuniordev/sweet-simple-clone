@@ -16,6 +16,8 @@ import { ScrollReveal } from "@/components/scroll-reveal";
 import { HeroSlider } from "@/components/hero-slider";
 import { useQuery } from "@tanstack/react-query";
 import { getServices, getPosts, getCaseStudies } from "@/lib/cms-queries";
+import { useI18n } from "@/lib/i18n";
+import { useLocalizedServices, useLocalizedPosts, useLocalizedCaseStudies } from "@/lib/i18n-data/localize";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -56,28 +58,27 @@ export const Route = createFileRoute("/")({
 });
 
 
-const steps = [
-  { n: "01", t: "Audit", d: "We map your brand, product and competitors before touching pixels." },
-  { n: "02", t: "Design", d: "Identity and interfaces built as one system, not separate files." },
-  { n: "03", t: "Build", d: "Development, video and content produced in-house." },
-  { n: "04", t: "Grow", d: "Maintenance, security and marketing keep the work compounding." },
-];
-
 function Index() {
-  const { data: services } = useQuery({
+  const { t } = useI18n();
+  const steps = t.home.steps;
+
+  const { data: servicesRaw } = useQuery({
     queryKey: ["services"],
     queryFn: getServices,
   });
+  const services = useLocalizedServices(servicesRaw);
 
-  const { data: posts } = useQuery({
+  const { data: postsRaw } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getPosts(),
   });
+  const posts = useLocalizedPosts(postsRaw);
 
-  const { data: caseStudies } = useQuery({
+  const { data: caseStudiesRaw } = useQuery({
     queryKey: ["case-studies"],
     queryFn: getCaseStudies,
   });
+  const caseStudies = useLocalizedCaseStudies(caseStudiesRaw);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -89,12 +90,7 @@ function Index() {
         <section className="border-b border-border bg-primary text-primary-foreground">
           <ScrollReveal direction="up">
             <div className="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-6 py-12 md:grid-cols-4">
-              {[
-                ["15", "Services in-house"],
-                ["120+", "Projects delivered"],
-                ["48h", "Average response"],
-                ["99.9%", "Uptime maintained"],
-              ].map(([v, l]) => (
+              {t.home.stats.map(([v, l]) => (
                 <div key={l}>
                   <div className="text-4xl font-black text-brand">{v}</div>
                   <div className="mt-1 text-sm opacity-80">{l}</div>
@@ -107,7 +103,7 @@ function Index() {
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-10">
             <p className="text-center text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground">
-              Trusted by teams at
+              {t.home.trustedBy}
             </p>
             <div className="mt-7 flex flex-wrap items-center justify-center gap-x-12 gap-y-5">
               {["Northwind", "Kora Labs", "Verdant", "Atlas Foods", "Pulse Fit", "Meridian"].map((n) => (
@@ -125,10 +121,10 @@ function Index() {
         <section id="services" className="mx-auto max-w-6xl px-6 py-24">
           <ScrollReveal direction="up">
             <h2 className="max-w-2xl text-4xl font-black tracking-tight md:text-5xl">
-              Everything your brand needs, <span className="text-brand">under one roof</span>
+              {t.home.servicesTitleA} <span className="text-brand">{t.home.servicesTitleB}</span>
             </h2>
             <p className="mt-4 max-w-xl text-muted-foreground">
-              Over 15 premium disciplines that work together — so strategy, design and code never contradict each other.
+              {t.home.servicesSub}
             </p>
           </ScrollReveal>
           <div className="mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -150,7 +146,7 @@ function Index() {
                     </h3>
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{s.desc_short}</p>
                     <p className="mt-4 text-sm font-bold">
-                      From <span className="text-brand">{(s.plans as any)?.[0]?.price}</span>
+                      {t.home.from} <span className="text-brand">{(s.plans as any)?.[0]?.price}</span>
                     </p>
                   </Link>
                 </ScrollReveal>
@@ -161,7 +157,7 @@ function Index() {
 
         <section id="process" className="border-y border-border bg-secondary">
           <div className="mx-auto max-w-6xl px-6 py-24">
-            <h2 className="text-4xl font-black tracking-tight md:text-5xl">How we work</h2>
+            <h2 className="text-4xl font-black tracking-tight md:text-5xl">{t.home.processTitle}</h2>
             <div className="mt-12 grid gap-8 md:grid-cols-4">
               {steps.map((s) => (
                 <div key={s.n} className="border-t-2 border-brand pt-5">
@@ -178,18 +174,17 @@ function Index() {
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-14 md:flex-row">
             <div>
               <h2 className="text-3xl font-black tracking-tight md:text-4xl">
-                Not sure which step you're on?
+                {t.home.ctaTitle}
               </h2>
               <p className="mt-3 max-w-lg text-sm opacity-80">
-                Book a free 30-minute scoping call. We'll tell you what to fix first — even if it
-                isn't something we'd bill for.
+                {t.home.ctaText}
               </p>
             </div>
             <Link
               to="/contact"
               className="inline-flex shrink-0 items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
             >
-              Book a call <ArrowUpRight className="h-4 w-4" />
+              {t.home.ctaButton} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </section>
@@ -197,11 +192,11 @@ function Index() {
         <section id="work" className="mx-auto max-w-6xl px-6 py-24">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Work</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">Selected projects</h2>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.home.workEyebrow}</p>
+              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">{t.home.workTitle}</h2>
             </div>
             <Link to="/work" className="inline-flex items-center gap-2 text-sm font-semibold hover:text-brand">
-              All case studies <ArrowUpRight className="h-4 w-4" />
+              {t.home.allCaseStudies} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -223,18 +218,14 @@ function Index() {
 
           <div className="mt-20 grid gap-12 md:grid-cols-2">
             <h2 className="text-4xl font-black tracking-tight md:text-5xl">
-              Why teams stay with <span className="text-brand">Mario Studio</span>
+              {t.home.whyTitleA} <span className="text-brand">Mario Studio</span>
             </h2>
             <ul className="space-y-6">
-              {[
-                ["One team, no handoffs", "Your designer, developer and marketer sit in the same room."],
-                ["Security is not an add-on", "Every build ships hardened, monitored and backed up."],
-                ["Measured, not decorated", "We report on conversions, load times and pipeline."],
-              ].map(([t, d]) => (
-                <li key={t} className="flex gap-4">
+              {t.home.whyItems.map(([ti, d]) => (
+                <li key={ti} className="flex gap-4">
                   <span className="mt-2 h-3 w-3 shrink-0 rounded-full bg-brand" />
                   <div>
-                    <h3 className="font-bold">{t}</h3>
+                    <h3 className="font-bold">{ti}</h3>
                     <p className="mt-1 text-sm text-muted-foreground">{d}</p>
                   </div>
                 </li>
@@ -245,9 +236,9 @@ function Index() {
 
         <section id="testimonials" className="border-y border-border bg-brand-soft">
           <div className="mx-auto max-w-6xl px-6 py-24">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Testimonials</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.home.testimonialsEyebrow}</p>
             <h2 className="mt-4 max-w-2xl text-4xl font-black tracking-tight md:text-5xl">
-              What clients say after launch
+              {t.home.testimonialsTitle}
             </h2>
             <div className="mt-12 grid gap-6 md:grid-cols-2">
               {testimonials.map((t) => (
@@ -275,11 +266,11 @@ function Index() {
         <section id="blog" className="mx-auto max-w-6xl px-6 py-24">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Journal</p>
-              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">From the studio</h2>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.home.journalEyebrow}</p>
+              <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">{t.home.journalTitle}</h2>
             </div>
             <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-semibold hover:text-brand">
-              All articles <ArrowUpRight className="h-4 w-4" />
+              {t.home.allArticles} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
           <div className="mt-12 grid gap-6 md:grid-cols-3">
@@ -304,13 +295,12 @@ function Index() {
         <section id="faq" className="border-t border-border">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-24 md:grid-cols-[0.8fr_1.2fr]">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">FAQs</p>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.home.faqEyebrow}</p>
               <h2 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
-                Questions we get <span className="text-brand">every week</span>
+                {t.home.faqTitleA} <span className="text-brand">{t.home.faqTitleB}</span>
               </h2>
               <p className="mt-5 text-sm text-muted-foreground">
-                Still unsure? Email us and we'll answer honestly, even if the answer is that you
-                don't need us yet.
+                {t.home.faqText}
               </p>
             </div>
             <Accordion type="single" collapsible className="w-full">
@@ -327,13 +317,12 @@ function Index() {
         <section id="newsletter" className="border-t border-border bg-secondary">
           <div className="mx-auto grid max-w-6xl items-center gap-10 px-6 py-20 md:grid-cols-2">
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Newsletter</p>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.home.newsletterEyebrow}</p>
               <h2 className="mt-4 text-3xl font-black tracking-tight md:text-4xl">
-                One useful email a month
+                {t.home.newsletterTitle}
               </h2>
               <p className="mt-4 text-sm text-muted-foreground">
-                Practical notes on branding, performance and security. No sales sequences, no fluff,
-                unsubscribe in one click.
+                {t.home.newsletterText}
               </p>
             </div>
             <NewsletterForm />
@@ -343,17 +332,17 @@ function Index() {
         <section id="contact" className="border-t border-border bg-primary text-primary-foreground">
           <div className="mx-auto max-w-4xl px-6 py-24 text-center">
             <h2 className="text-4xl font-black tracking-tight md:text-5xl">
-              Let's build something worth <span className="text-brand">looking at</span>
+              {t.home.finalTitleA} <span className="text-brand">{t.home.finalTitleB}</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl opacity-80">
-              Tell us about your project and get a free brand audit within 48 hours.
+              {t.home.finalText}
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <Link
                 to="/contact"
                 className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
               >
-                Start a project <ArrowUpRight className="h-4 w-4" />
+                {t.home.startProject} <ArrowUpRight className="h-4 w-4" />
               </Link>
               <a
                 href="mailto:hello@mariostudio.com"

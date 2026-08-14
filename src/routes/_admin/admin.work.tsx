@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/_admin/admin/work")({
   component: AdminWork,
 });
 
 function AdminWork() {
+  const { t } = useI18n();
   const { data: projects, refetch } = useQuery({
     queryKey: ["admin-work"],
     queryFn: async () => {
@@ -21,12 +23,12 @@ function AdminWork() {
   });
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this case study?")) return;
+    if (!confirm(t.admin.work.confirmDelete)) return;
     const { error } = await supabase.from("cms_case_studies").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Project deleted");
+      toast.success(t.admin.work.toastDeleted);
       refetch();
     }
   };
@@ -35,11 +37,11 @@ function AdminWork() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black tracking-tight">Case Studies</h1>
-          <p className="text-muted-foreground mt-1">Manage your portfolio projects.</p>
+          <h1 className="text-3xl font-black tracking-tight">{t.admin.work.title}</h1>
+          <p className="text-muted-foreground mt-1">{t.admin.work.subtitle}</p>
         </div>
         <Button className="bg-brand text-brand-foreground font-bold gap-2">
-          <Plus className="h-4 w-4" /> Add Project
+          <Plus className="h-4 w-4" /> {t.admin.work.addProject}
         </Button>
       </div>
 
@@ -47,11 +49,11 @@ function AdminWork() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Client</TableHead>
-              <TableHead>Year</TableHead>
-              <TableHead>Industry</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.work.tableTitle}</TableHead>
+              <TableHead>{t.admin.work.tableClient}</TableHead>
+              <TableHead>{t.admin.work.tableYear}</TableHead>
+              <TableHead>{t.admin.work.tableIndustry}</TableHead>
+              <TableHead className="text-right">{t.admin.work.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -80,7 +82,7 @@ function AdminWork() {
             {projects?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
-                  No projects found.
+                  {t.admin.work.noProjects}
                 </TableCell>
               </TableRow>
             )}

@@ -1,3 +1,5 @@
+import { useI18n } from "@/lib/i18n";
+
 export type Testimonial = {
   quote: string;
   name: string;
@@ -5,6 +7,9 @@ export type Testimonial = {
   initials: string;
 };
 
+export type Faq = { q: string; a: string };
+
+/** English defaults kept for any non-hook consumers / type inference. */
 export const testimonials: Testimonial[] = [
   {
     quote:
@@ -36,8 +41,6 @@ export const testimonials: Testimonial[] = [
   },
 ];
 
-export type Faq = { q: string; a: string };
-
 export const faqs: Faq[] = [
   {
     q: "How long does a typical project take?",
@@ -64,3 +67,14 @@ export const faqs: Faq[] = [
     a: "You can leave with everything, or keep us on a maintenance and security retainer that covers updates, backups, monitoring, uptime checks and small monthly improvements.",
   },
 ];
+
+/** Locale-aware hooks — use these in components so copy follows the language toggle. */
+export function useTestimonials(): Testimonial[] {
+  const { t } = useI18n();
+  return t.siteContent.testimonials;
+}
+
+export function useFaqs(): Faq[] {
+  const { t } = useI18n();
+  return t.siteContent.faqs;
+}

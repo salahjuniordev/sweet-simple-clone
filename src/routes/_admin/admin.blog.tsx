@@ -7,6 +7,7 @@ import { Plus, Edit, Trash2, Search, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useI18n } from "@/lib/i18n";
 import { 
   Dialog, 
   DialogContent, 
@@ -27,6 +28,7 @@ export const Route = createFileRoute("/_admin/admin/blog")({
 });
 
 function AdminBlog() {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const [roleDialogOpen, setRoleDialogOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState("");
@@ -56,12 +58,12 @@ function AdminBlog() {
   });
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this post?")) return;
+    if (!confirm(t.admin.blog.confirmDelete)) return;
     const { error } = await supabase.from("cms_posts").delete().eq("id", id);
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Post deleted");
+      toast.success(t.admin.blog.toastDeleted);
       refetch();
     }
   };
@@ -75,7 +77,7 @@ function AdminBlog() {
     if (error) {
       toast.error(error.message);
     } else {
-      toast.success("Role updated");
+      toast.success(t.admin.blog.toastRoleUpdated);
       setRoleDialogOpen(false);
     }
   };
@@ -89,50 +91,50 @@ function AdminBlog() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-black tracking-tight">Blog Posts</h1>
-          <p className="text-muted-foreground mt-1">Manage your journal articles.</p>
+          <h1 className="text-3xl font-black tracking-tight">{t.admin.blog.title}</h1>
+          <p className="text-muted-foreground mt-1">{t.admin.blog.subtitle}</p>
         </div>
         <div className="flex gap-2">
           <Dialog open={roleDialogOpen} onOpenChange={setRoleDialogOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" className="gap-2">
-                <UserPlus className="h-4 w-4" /> Manage Roles
+                <UserPlus className="h-4 w-4" /> {t.admin.blog.manageRoles}
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Update User Role</DialogTitle>
+                <DialogTitle>{t.admin.blog.updateUserRole}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">User ID (UUID)</label>
+                  <label className="text-sm font-medium">{t.admin.blog.userIdLabel}</label>
                   <Input 
-                    placeholder="Enter user id" 
+                    placeholder={t.admin.blog.userIdPlaceholder} 
                     value={selectedUser} 
                     onChange={e => setSelectedUser(e.target.value)} 
                   />
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Role</label>
+                  <label className="text-sm font-medium">{t.admin.blog.roleLabel}</label>
                   <Select value={selectedRole} onValueChange={setSelectedRole}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
+                      <SelectValue placeholder={t.admin.blog.selectRole} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="editor">Editor</SelectItem>
-                      <SelectItem value="user">User</SelectItem>
+                      <SelectItem value="admin">{t.admin.blog.roleAdmin}</SelectItem>
+                      <SelectItem value="editor">{t.admin.blog.roleEditor}</SelectItem>
+                      <SelectItem value="user">{t.admin.blog.roleUser}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button onClick={handleUpdateRole} className="w-full bg-brand text-brand-foreground">
-                  Update Role
+                  {t.admin.blog.updateRole}
                 </Button>
               </div>
             </DialogContent>
           </Dialog>
           <Button className="bg-brand text-brand-foreground font-bold gap-2">
-            <Plus className="h-4 w-4" /> Add Post
+            <Plus className="h-4 w-4" /> {t.admin.blog.addPost}
           </Button>
         </div>
       </div>
@@ -140,7 +142,7 @@ function AdminBlog() {
       <div className="flex items-center gap-2 max-w-sm">
         <Search className="h-4 w-4 text-muted-foreground" />
         <Input 
-          placeholder="Search posts..." 
+          placeholder={t.admin.blog.searchPlaceholder} 
           value={search}
           onChange={e => setSearch(e.target.value)}
           className="h-9"
@@ -151,10 +153,10 @@ function AdminBlog() {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Date</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead>{t.admin.blog.tableTitle}</TableHead>
+              <TableHead>{t.admin.blog.tableCategory}</TableHead>
+              <TableHead>{t.admin.blog.tableDate}</TableHead>
+              <TableHead className="text-right">{t.admin.blog.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -184,7 +186,7 @@ function AdminBlog() {
             {filteredPosts?.length === 0 && (
               <TableRow>
                 <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                  No posts found.
+                  {t.admin.blog.noPosts}
                 </TableCell>
               </TableRow>
             )}

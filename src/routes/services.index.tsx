@@ -4,6 +4,8 @@ import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getServices } from "@/lib/cms-queries";
 import { serviceIcons } from "@/lib/service-icons";
+import { useI18n } from "@/lib/i18n";
+import { useLocalizedServices } from "@/lib/i18n-data/localize";
 
 
 export const Route = createFileRoute("/services/")({
@@ -30,12 +32,14 @@ export const Route = createFileRoute("/services/")({
 });
 
 function ServicesIndex() {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
-  
-  const { data: services, isLoading } = useQuery({
+
+  const { data: servicesRaw, isLoading } = useQuery({
     queryKey: ["services"],
     queryFn: getServices,
   });
+  const services = useLocalizedServices(servicesRaw);
 
   const visible = useMemo(() => {
     if (!services) return [];
@@ -59,7 +63,7 @@ function ServicesIndex() {
             to="/"
             className="text-sm font-semibold transition-colors hover:text-brand"
           >
-            Back home
+            {t.servicesPage.backHome}
           </Link>
         </div>
       </header>
@@ -68,18 +72,17 @@ function ServicesIndex() {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
           <div>
             <h1 className="max-w-3xl text-5xl font-black tracking-tight md:text-6xl">
-              Services &amp; <span className="text-brand">pricing</span>
+              {t.servicesPage.titleA} <span className="text-brand">{t.servicesPage.titleB}</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Premium digital disciplines, each with clear packages. Pick a service to see what's included and
-              what it costs.
+              {t.servicesPage.sub}
             </p>
           </div>
           <div className="relative w-full md:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input 
               type="text"
-              placeholder="Search services..."
+              placeholder={t.servicesPage.searchPlaceholder}
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 bg-background border border-border rounded-xl text-sm focus:outline-none focus:border-brand"
@@ -111,14 +114,14 @@ function ServicesIndex() {
                   </h2>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{s.desc_short}</p>
                   <p className="mt-4 text-sm font-bold">
-                    From <span className="text-brand">{(s.plans as any)?.[0]?.price}</span>
+                    {t.servicesPage.from} <span className="text-brand">{(s.plans as any)?.[0]?.price}</span>
                   </p>
                 </Link>
               );
             })}
             {visible?.length === 0 && (
               <div className="col-span-full py-20 text-center text-muted-foreground">
-                No services match your search. Try a different keyword.
+                {t.servicesPage.noResults}
               </div>
             )}
           </div>
@@ -127,7 +130,7 @@ function ServicesIndex() {
 
       <footer className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-8 text-sm text-muted-foreground">
-          © {new Date().getFullYear()} Mario Studio. All rights reserved.
+          {t.servicesPage.copyrightPrefix(new Date().getFullYear())} {t.servicesPage.rights}
         </div>
       </footer>
     </div>

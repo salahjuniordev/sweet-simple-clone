@@ -10,12 +10,14 @@ import {
 } from "@/components/ui/accordion";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
-import { serviceFaqs } from "@/lib/service-faqs";
+import { getServiceFaqs, serviceFaqs } from "@/lib/service-faqs";
 import { caseStudyForService } from "@/lib/work-data";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { LeadCaptureForm } from "@/components/lead-capture-form";
+import { useI18n } from "@/lib/i18n";
+import { useLocalizedService, useLocalizedServices } from "@/lib/i18n-data/localize";
 
 export const Route = createFileRoute("/services/$slug")({
   loader: async ({ params }) => {
@@ -98,9 +100,9 @@ function ServiceNotFound() {
   return (
     <div className="flex min-h-screen items-center justify-center px-6 text-center">
       <div>
-        <h1 className="text-3xl font-black">We don't offer that service</h1>
+        <h1 className="text-3xl font-black">{useI18n().t.serviceDetail.notFoundTitle}</h1>
         <Link to="/services" className="mt-4 inline-block font-semibold text-brand">
-          Browse all services
+          {useI18n().t.serviceDetail.notFoundLink}
         </Link>
       </div>
     </div>
@@ -108,17 +110,20 @@ function ServiceNotFound() {
 }
 
 function ServiceDetail() {
-  const { service } = Route.useLoaderData() as any;
+  const { t, lang } = useI18n();
+  const { service: serviceRaw } = Route.useLoaderData() as any;
+  const service = useLocalizedService(serviceRaw)!;
   const Icon = serviceIcons[service.icon as keyof typeof serviceIcons];
   const [selectedTier, setSelectedTier] = useState<string>((service.plans as any[])?.[0]?.name || "Basic");
   
-  const { data: allServices } = useQuery({
+  const { data: allServicesRaw } = useQuery({
     queryKey: ["services"],
     queryFn: getServices,
   });
+  const allServices = useLocalizedServices(allServicesRaw);
 
   const others = allServices?.filter((s) => s.slug !== service.slug).slice(0, 4) || [];
-  const faqItems = serviceFaqs[service.slug as keyof typeof serviceFaqs] ?? [];
+  const faqItems = getServiceFaqs(service.slug, lang);
   const relatedCase = caseStudyForService(service.slug);
   
   const currentPlan = (service.plans as any[]).find(p => p.name === selectedTier) || (service.plans as any[])[0];
@@ -144,7 +149,7 @@ function ServiceDetail() {
                 href="#quote"
                 className="mt-9 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
               >
-                Request a quote <ArrowUpRight className="h-4 w-4" />
+                {t.serviceDetail.requestQuote} <ArrowUpRight className="h-4 w-4" />
               </a>
             </ScrollReveal>
           </div>
@@ -153,7 +158,7 @@ function ServiceDetail() {
         <section className="mx-auto max-w-6xl px-6 py-20">
           <div className="grid gap-14 md:grid-cols-2">
             <div>
-              <h2 className="text-3xl font-black tracking-tight">What you get out of it</h2>
+              <h2 className="text-3xl font-black tracking-tight">{t.serviceDetail.benefitsTitle}</h2>
               <ul className="mt-6 space-y-4">
                 {(service.benefits as string[]).map((b) => (
                   <li key={b} className="flex gap-3">
@@ -164,7 +169,7 @@ function ServiceDetail() {
               </ul>
             </div>
             <div className="rounded-2xl border border-border bg-secondary p-8">
-              <h2 className="text-xl font-bold">Deliverables</h2>
+              <h2 className="text-xl font-bold">{t.serviceDetail.deliverables}</h2>
               <ul className="mt-5 space-y-3">
                 {(service.deliverables as string[]).map((d) => (
                   <li key={d} className="flex items-center gap-3 border-b border-border pb-3 text-sm last:border-0 last:pb-0">
@@ -181,9 +186,9 @@ function ServiceDetail() {
           <div className="mx-auto max-w-6xl px-6 py-20">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div>
-                <h2 className="text-4xl font-black tracking-tight">Pricing & <span className="text-brand">Scope</span></h2>
+                <h2 className="text-4xl font-black tracking-tight">{t.serviceDetail.pricingA} <span className="text-brand">{t.serviceDetail.pricingB}</span></h2>
                 <p className="mt-3 max-w-xl text-muted-foreground">
-                  Select a tier to view estimated deliverables and get an instant quote request.
+                  {t.serviceDetail.pricingSub}
                 </p>
               </div>
               
@@ -213,7 +218,7 @@ function ServiceDetail() {
                         <Sparkles className="h-6 w-6" />
                       </div>
                       <div>
-                        <h3 className="text-2xl font-bold">{currentPlan.name} Package</h3>
+                        <h3 className="text-2xl font-bold">{t.serviceDetail.packageTitle(currentPlan.name)}</h3>
                         <div className="flex items-baseline gap-2">
                           <span className="text-3xl font-black">{currentPlan.price}</span>
                           <span className="text-sm text-muted-foreground">{currentPlan.note}</span>
@@ -223,7 +228,7 @@ function ServiceDetail() {
 
                     <div className="grid gap-8 md:grid-cols-2">
                       <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-brand mb-4">Features</h4>
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-brand mb-4">{t.serviceDetail.features}</h4>
                         <ul className="space-y-3">
                           {currentPlan.features.map((f: string) => (
                             <li key={f} className="flex gap-3 text-sm">
@@ -234,11 +239,9 @@ function ServiceDetail() {
                         </ul>
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold uppercase tracking-widest text-brand mb-4">Estimated Scope</h4>
+                        <h4 className="text-sm font-bold uppercase tracking-widest text-brand mb-4">{t.serviceDetail.estimatedScope}</h4>
                         <p className="text-sm text-muted-foreground leading-relaxed">
-                          This tier is designed for {currentPlan.name.toLowerCase()} requirements. 
-                          Includes complete {service.title.toLowerCase()} strategy, asset creation, and 
-                          {currentPlan.features.length} core deliverables optimized for conversion.
+                          {t.serviceDetail.scopeText(currentPlan.name, service.title, currentPlan.features.length)}
                         </p>
                       </div>
                     </div>
@@ -256,7 +259,7 @@ function ServiceDetail() {
         {faqItems.length > 0 && (
           <section className="mx-auto max-w-3xl px-6 py-20">
             <h2 className="text-3xl font-black tracking-tight">
-              {service.title} <span className="text-brand">FAQs</span>
+              {service.title} <span className="text-brand">{t.serviceDetail.faqs}</span>
             </h2>
             <Accordion type="single" collapsible className="mt-8 w-full">
               {faqItems.map((f, i) => (
@@ -272,7 +275,7 @@ function ServiceDetail() {
         {relatedCase && (
           <section className="border-y border-border">
             <div className="mx-auto max-w-6xl px-6 py-20">
-              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Related case study</p>
+              <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{t.serviceDetail.relatedCase}</p>
               <Link
                 to="/work/$slug"
                 params={{ slug: relatedCase.slug }}
@@ -284,7 +287,7 @@ function ServiceDetail() {
                   </h2>
                   <p className="mt-3 max-w-xl text-muted-foreground">{relatedCase.summary}</p>
                   <span className="mt-6 inline-flex items-center gap-2 text-sm font-semibold">
-                    Read the case study <ArrowUpRight className="h-4 w-4" />
+                    {t.serviceDetail.readCase} <ArrowUpRight className="h-4 w-4" />
                   </span>
                 </div>
                 <div className="grid grid-cols-2 gap-4 self-center">
@@ -303,23 +306,22 @@ function ServiceDetail() {
         <section className="bg-primary text-primary-foreground">
           <div className="mx-auto max-w-4xl px-6 py-24 text-center">
             <h2 className="text-4xl font-black tracking-tight md:text-5xl">
-              Don't see exactly <span className="text-brand">what you need?</span>
+              {t.serviceDetail.customTitleA} <span className="text-brand">{t.serviceDetail.customTitleB}</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl opacity-80">
-              We offer custom retainers and project-based pricing for complex requirements. 
-              Let's hop on a call and build a custom package for you.
+              {t.serviceDetail.customText}
             </p>
             <Link
               to="/contact"
               className="mt-10 inline-flex items-center gap-2 rounded-full bg-brand px-10 py-5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
             >
-              Book a Strategy Call <ArrowUpRight className="h-4 w-4" />
+              {t.serviceDetail.bookCall} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-2xl font-black tracking-tight">Other services</h2>
+          <h2 className="text-2xl font-black tracking-tight">{t.serviceDetail.otherServices}</h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {others.map((s) => (
               <Link
