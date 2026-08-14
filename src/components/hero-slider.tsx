@@ -11,7 +11,11 @@ const slideLinks = ["/contact", "/services/ui-ux-design", "/services/identity-br
 
 export function HeroSlider() {
   const { t } = useI18n();
-  const slides = t.hero.slides.map((slide, i) => ({ ...slide, ctaLink: slideLinks[i], image: logoUrl }));
+  const slides = t.hero.slides.map((slide, i) => ({
+    ...slide,
+    ctaLink: slideLinks[i] ?? "/contact",
+    image: logoUrl,
+  }));
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
     Autoplay({ delay: 6000, stopOnInteraction: false }),
   ]);
