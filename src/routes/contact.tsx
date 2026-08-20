@@ -5,6 +5,7 @@ import { Mail, Clock, Globe, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { services } from "@/lib/services-data";
+import { submitContactForm } from "@/lib/leads.functions";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -53,9 +54,12 @@ function ContactPage() {
   const navigate = useNavigate();
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
+  const [serverError, setServerError] = useState("");
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (submitting) return;
+
     const form = new FormData(e.currentTarget);
     const parsed = contactSchema.safeParse({
       name: String(form.get("name") ?? ""),
@@ -77,8 +81,17 @@ function ContactPage() {
     }
 
     setErrors({});
+    setServerError("");
     setSubmitting(true);
-    navigate({ to: "/thank-you" });
+
+    try {
+      await submitContactForm({ data: parsed.data });
+      navigate({ to: "/thank-you" });
+    } catch (err) {
+      console.error("Contact form submission failed:", err);
+      setServerError("Something went wrong. Please try again or email us directly.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -148,6 +161,9 @@ function ContactPage() {
               </div>
             </div>
 
+            {serverError && (
+              <p className="mt-4 text-sm font-semibold text-destructive">{serverError}</p>
+            )}
             <button
               type="submit"
               disabled={submitting}

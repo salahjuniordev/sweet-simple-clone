@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import { Resend } from "resend";
 
 export const submitLead = createServerFn({ method: "POST" })
   .inputValidator((data) => 
@@ -45,23 +46,120 @@ export const submitLead = createServerFn({ method: "POST" })
     };
 
     if (config.team_notification_enabled) {
-      console.log(`[Notification] Sending lead alert to team: ${config.team_emails.join(", ")}`);
-      console.log(`Lead Details: ${JSON.stringify(data, null, 2)}`);
-      
-      // In a real implementation with Resend/SendGrid:
-      // await resend.emails.send({
-      //   from: 'Mario Studio <leads@mariostudio.com>',
-      //   to: config.team_emails,
-      //   subject: `New Lead: ${data.service_slug} (${data.tier})`,
-      //   text: `New lead from ${data.name} (${data.email}).\nService: ${data.service_slug}\nTier: ${data.tier}\nMessage: ${data.message}`
-      // });
+      const resendApiKey = process.env["RESEND_API_KEY"];
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+        const fromEmail = process.env["RESEND_FROM_EMAIL"] || "onboarding@resend.dev";
+        await resend.emails.send({
+          from: `Mario Studio <${fromEmail}>`,
+          to: config.team_emails,
+          replyTo: data.email,
+          subject: `New Lead: ${data.service_slug} (${data.tier})`,
+          text: `New lead from ${data.name} (${data.email}).\n\nService: ${data.service_slug}\nTier: ${data.tier}\nMessage: ${data.message}`,
+        });
+      } else {
+        console.warn("[Email] RESEND_API_KEY not configured — skipping team notification");
+      }
     }
 
     if (config.auto_reply_enabled) {
-      console.log(`[Notification] Sending auto-reply to customer: ${data.email}`);
-      console.log(`Subject: Thanks for reaching out to Mario Studio!`);
+      const resendApiKey = process.env["RESEND_API_KEY"];
+      if (resendApiKey) {
+        const resend = new Resend(resendApiKey);
+        const fromEmail = process.env["RESEND_FROM_EMAIL"] || "onboarding@resend.dev";
+        await resend.emails.send({
+          from: `Mario Studio <${fromEmail}>`,
+          to: data.email,
+          subject: "Thanks for reaching out to Mario Studio!",
+          text: `Hi ${data.name},\n\nThanks for reaching out! We've received your project brief and will review it shortly.\n\nA member of our team will get back to you within 48 hours with a scoped reply — including a timeline, price range, and a free brand audit.\n\nBest regards,\nMario Studio`,
+        });
+      } else {
+        console.warn("[Email] RESEND_API_KEY not configured — skipping auto-reply");
+      }
     }
     
+    return { success: true };
+  });
+
+export const submitContactForm = createServerFn({ method: "POST" })
+  .inputValidator((data) =>
+    z.object({
+      name: z.string().trim().min(2).max(100),
+      email: z.string().trim().email().max(255),
+      company: z.string().trim().max(120).optional(),
+      service: z.string().trim().min(1),
+      budget: z.string().trim().min(1),
+      message: z.string().trim().min(20).max(2000),
+    }).parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    // Save to database
+    const { error: dbError } = await supabaseAdmin
+      .from("lead_submissions")
+      .insert({
+        name: data.name,
+        email: data.email,
+        message: `[Company: ${data.company || "N/A"}]\n[Service: ${data.service}]\n[Budget: ${data.budget}]\n\n${data.message}`,
+        service_slug: data.service,
+        tier: data.budget,
+        source: "contact-form",
+      } as any);
+
+    if (dbError) {
+      console.error("Error saving contact form submission:", dbError);
+      throw dbError;
+    }
+
+    // Fetch notification settings
+    const { data: settings } = await (supabaseAdmin.from("notification_settings" as any) as any)
+      .select("value")
+      .eq("key", "lead_notifications")
+      .maybeSingle();
+
+    const config = (settings?.value as any) || {
+      team_emails: ["hello@mariostudio.com"],
+      auto_reply_enabled: true,
+      team_notification_enabled: true,
+    };
+
+    const resendApiKey = process.env["RESEND_API_KEY"];
+
+    if (config.team_notification_enabled && resendApiKey) {
+      const resend = new Resend(resendApiKey);
+      const fromEmail = process.env["RESEND_FROM_EMAIL"] || "onboarding@resend.dev";
+      await resend.emails.send({
+        from: `Mario Studio <${fromEmail}>`,
+        to: config.team_emails,
+        replyTo: data.email,
+        subject: `New Contact Inquiry — ${data.service}`,
+        text: [
+          `New contact form submission`,
+          ``,
+          `Name: ${data.name}`,
+          `Email: ${data.email}`,
+          `Company: ${data.company || "N/A"}`,
+          `Service: ${data.service}`,
+          `Budget: ${data.budget}`,
+          ``,
+          `Message:`,
+          data.message,
+        ].join("\n"),
+      });
+    }
+
+    if (config.auto_reply_enabled && resendApiKey) {
+      const resend = new Resend(resendApiKey);
+      const fromEmail = process.env["RESEND_FROM_EMAIL"] || "onboarding@resend.dev";
+      await resend.emails.send({
+        from: `Mario Studio <${fromEmail}>`,
+        to: data.email,
+        subject: "Thanks for reaching out to Mario Studio!",
+        text: `Hi ${data.name},\n\nThanks for reaching out! We've received your project brief and will review it shortly.\n\nA member of our team will get back to you within 48 hours with a scoped reply — including a timeline, price range, and a free brand audit.\n\nBest regards,\nMario Studio`,
+      });
+    }
+
     return { success: true };
   });
 
