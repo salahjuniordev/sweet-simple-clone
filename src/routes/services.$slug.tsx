@@ -11,7 +11,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getServiceFaqs, serviceFaqs } from "@/lib/service-faqs";
-import { serviceMetaDescriptions } from "@/lib/service-meta";
+import { serviceMetaDescriptions, serviceOgDescriptions } from "@/lib/service-meta";
 import { caseStudyForService } from "@/lib/work-data";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { useQuery } from "@tanstack/react-query";
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/services/$slug")({
         { title },
         { name: "description", content: description },
         { property: "og:title", content: title },
-        { property: "og:description", content: description },
+        { property: "og:description", content: serviceOgDescriptions[service.slug] ?? description },
         { property: "og:type", content: "website" },
         { property: "og:url", content: absoluteUrl },
         { property: "og:image", content: imageUrl },

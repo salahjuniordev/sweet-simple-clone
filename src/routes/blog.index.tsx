@@ -20,7 +20,7 @@ export const Route = createFileRoute("/blog/")({
       {
         property: "og:description",
         content:
-          "Brand audits, site performance, design handoffs and security basics, written by the studio that ships them.",
+          "Explore Mario Studio's insights on branding, web design, development, performance, marketing, security and digital products.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/blog" },

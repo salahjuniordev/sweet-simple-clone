@@ -24,7 +24,7 @@ export const Route = createFileRoute("/faq")({
       { property: "og:title", content: "Frequently Asked Questions | Mario Studio" },
       {
         property: "og:description",
-        content: "Everything clients ask before starting: timelines, cost, ownership and what happens after launch.",
+        content: "Get answers about Mario Studio's services, pricing, timelines, support, ownership, technology, security and remote collaboration.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/faq" },

@@ -31,3 +31,37 @@ export const serviceMetaDescriptions: Record<string, string> = {
   "saas-product-strategy":
     "Turn SaaS ideas into clear product strategies with positioning, product requirements, user journeys and planning designed to help teams build the right product.",
 };
+
+// Hand-written og:description values per service slug.
+export const serviceOgDescriptions: Record<string, string> = {
+  "web-development":
+    "Build fast, SEO-ready websites, e-commerce stores and web apps with Mario Studio's high-performance development services.",
+  "graphic-design":
+    "Create consistent visuals for your brand, campaigns, packaging, social media and print with Mario Studio's graphic design services.",
+  "identity-branding":
+    "Build a complete brand identity with logos, colours, typography, guidelines and visual direction designed to grow with your business.",
+  "ui-ux-design":
+    "Design better digital experiences with user flows, prototypes, high-fidelity interfaces and scalable design systems focused on usability and conversion.",
+  "video-editing":
+    "Turn your content into polished videos with professional editing, captions, motion and platform-ready formats for social media, products and campaigns.",
+  "brand-audit":
+    "Discover what may be holding your brand back with a detailed audit of your website, content, competitors and positioning, plus a clear action plan.",
+  "web-maintenance":
+    "Keep your website secure, updated and reliable with ongoing maintenance, backups, monitoring, security patches and content updates.",
+  "web-security":
+    "Strengthen your website security with assessments, hardening, vulnerability monitoring, backups and incident planning from Mario Studio.",
+  "digital-marketing":
+    "Grow your business with digital marketing focused on leads, revenue and measurable results across search, social and email campaigns.",
+  "motion-design":
+    "Bring your brand and digital products to life with animated logos, UI motion, Lottie animations and high-resolution motion graphics.",
+  "ecommerce-strategy":
+    "Build a stronger online store with e-commerce strategy focused on customer journeys, conversion, retention and sustainable growth.",
+  "ai-automation":
+    "Save time and scale your business with custom AI chatbots, integrations and automated workflows built around your processes.",
+  "sem-paid-social":
+    "Drive more conversions with Google and Meta advertising managed by Mario Studio, including campaign strategy, creative, optimization and reporting.",
+  "content-strategy":
+    "Build a content strategy that attracts the right audience and supports SEO, lead generation and long-term business growth.",
+  "saas-product-strategy":
+    "Turn your SaaS idea into a clear product strategy with positioning, requirements, user journeys and a focused roadmap for development.",
+};

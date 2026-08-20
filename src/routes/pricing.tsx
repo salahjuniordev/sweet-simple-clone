@@ -25,7 +25,7 @@ export const Route = createFileRoute("/pricing")({
       { property: "og:title", content: "Pricing — Compare All Services | Mario Studio" },
       {
         property: "og:description",
-        content: "Transparent tiers for branding, development, design, video, security and marketing.",
+        content: "Explore Mario Studio's digital service pricing, including web development packages, fixed quotes and flexible monthly retainers.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/pricing" },

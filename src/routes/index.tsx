@@ -32,7 +32,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Web development, identity branding, UI/UX, video editing, brand audit, maintenance, security and digital marketing under one studio.",
+          "Mario Studio is a digital studio based in Canada helping businesses in Canada, Cameroon and worldwide with branding, UI/UX, web development, video and marketing.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/" },

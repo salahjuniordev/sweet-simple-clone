@@ -18,7 +18,7 @@ export const Route = createFileRoute("/contact")({
       { property: "og:title", content: "Start a Project | Mario Studio" },
       {
         property: "og:description",
-        content: "Tell us about your project and get a free brand audit within 48 hours.",
+        content: "Start your next project with Mario Studio. Tell us what you're building and receive a scoped response plus a free brand audit within 48 hours.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/contact" },

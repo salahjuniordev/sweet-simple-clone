@@ -15,7 +15,7 @@ export const Route = createFileRoute("/work/")({
           "Explore Mario Studio case studies in branding, web development, UI/UX, marketing and digital design, with measurable results and real business outcomes.",
       },
       { property: "og:title", content: "Our Work — Case Studies | Mario Studio" },
-      { property: "og:description", content: "Selected projects and the measurable results they produced." },
+      { property: "og:description", content: "See how Mario Studio helps businesses grow through branding, web development, UI/UX, marketing and digital design." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/work" },
       { name: "twitter:card", content: "summary_large_image" },
