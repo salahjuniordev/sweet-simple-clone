@@ -4,6 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { useQuery } from "@tanstack/react-query";
 import { getCaseStudies } from "@/lib/cms-queries";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/work/")({
   head: () => ({
@@ -26,6 +27,9 @@ export const Route = createFileRoute("/work/")({
 });
 
 function WorkIndex() {
+  const { t } = useI18n();
+  const { workPage } = t;
+
   const { data: caseStudies, isLoading } = useQuery({
     queryKey: ["case-studies"],
     queryFn: getCaseStudies,
@@ -38,13 +42,12 @@ function WorkIndex() {
       <main>
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Work</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{workPage.eyebrow}</p>
             <h1 className="mt-4 max-w-3xl text-5xl font-black tracking-tight md:text-6xl">
-              Projects, and what they <span className="text-brand">actually changed</span>
+              {workPage.titleA} <span className="text-brand">{workPage.titleB}</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Every case study lists the problem, what we did and the numbers afterwards. No mood
-              boards without outcomes.
+              {workPage.sub}
             </p>
           </div>
         </section>
@@ -72,7 +75,7 @@ function WorkIndex() {
                     <ArrowUpRight className="mt-1 h-5 w-5 shrink-0 text-brand opacity-0 transition-opacity group-hover:opacity-100" />
                   </h2>
                   <p className="mt-3 max-w-xl text-muted-foreground">{c.summary}</p>
-                  <p className="mt-5 text-sm font-semibold">{c.client} · {(c.services as string[]).join(" · ")}</p>
+                  <p className="mt-5 text-sm font-semibold">{c.client}{workPage.servicesSeparator}{(c.services as string[]).join(workPage.servicesSeparator)}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 self-center">
                   {(c.results as any[]).slice(0, 4).map((r) => (

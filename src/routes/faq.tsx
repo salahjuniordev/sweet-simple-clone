@@ -11,6 +11,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { faqs } from "@/lib/site-content";
 import { services } from "@/lib/services-data";
 import { serviceFaqs } from "@/lib/service-faqs";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/faq")({
   head: () => ({
@@ -50,6 +51,9 @@ export const Route = createFileRoute("/faq")({
 });
 
 function FaqPage() {
+  const { t } = useI18n();
+  const { faq } = t;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -57,19 +61,18 @@ function FaqPage() {
       <main>
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">FAQs</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{faq.eyebrow}</p>
             <h1 className="mt-4 max-w-3xl text-5xl font-black tracking-tight md:text-6xl">
-              Answers before you <span className="text-brand">ask</span>
+              {faq.heroTitlePrefix}<span className="text-brand">{faq.heroTitleHighlight}</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              General questions first, then the ones specific to each service. If yours is not here,
-              email us and we will answer honestly.
+              {faq.heroBody}
             </p>
           </div>
         </section>
 
         <section className="mx-auto max-w-3xl px-6 py-16">
-          <h2 className="text-2xl font-black tracking-tight">General</h2>
+          <h2 className="text-2xl font-black tracking-tight">{faq.generalTitle}</h2>
           <Accordion type="single" collapsible className="mt-6 w-full">
             {faqs.map((f, i) => (
               <AccordionItem key={f.q} value={`g-${i}`}>
@@ -94,7 +97,7 @@ function FaqPage() {
                       params={{ slug: s.slug }}
                       className="inline-flex items-center gap-1 text-sm font-semibold hover:text-brand"
                     >
-                      Service page <ArrowUpRight className="h-4 w-4" />
+                      {faq.servicePageLink} <ArrowUpRight className="h-4 w-4" />
                     </Link>
                   </div>
                   <Accordion type="single" collapsible className="mt-4 w-full">
@@ -114,13 +117,13 @@ function FaqPage() {
         <section className="border-t border-border bg-primary text-primary-foreground">
           <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-6 px-6 py-16 md:flex-row">
             <h2 className="max-w-lg text-3xl font-black tracking-tight md:text-4xl">
-              Still have a question?
+              {faq.ctaTitle}
             </h2>
             <Link
               to="/contact"
               className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
             >
-              Ask us directly <ArrowUpRight className="h-4 w-4" />
+              {faq.ctaButton} <ArrowUpRight className="h-4 w-4" />
             </Link>
           </div>
         </section>

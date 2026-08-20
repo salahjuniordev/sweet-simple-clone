@@ -3,6 +3,7 @@ import { CheckCircle2, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { posts, formatPostDate } from "@/lib/blog-data";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/thank-you")({
   head: () => ({
@@ -23,6 +24,9 @@ export const Route = createFileRoute("/thank-you")({
 });
 
 function ThankYouPage() {
+  const { t } = useI18n();
+  const { thankYou } = t;
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <SiteHeader />
@@ -32,31 +36,30 @@ function ThankYouPage() {
           <div className="mx-auto max-w-3xl px-6 py-24 text-center">
             <CheckCircle2 className="mx-auto h-14 w-14 text-brand" />
             <h1 className="mt-7 text-4xl font-black tracking-tight md:text-5xl">
-              Brief received. <span className="text-brand">Talk soon.</span>
+              {thankYou.titlePrefix}<span className="text-brand">{thankYou.titleHighlight}</span>
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
-              A real person reads every brief. Expect a scoped reply — with timeline, price range
-              and a free brand audit — within 48 hours on business days.
+              {thankYou.body}
             </p>
             <div className="mt-10 flex flex-wrap justify-center gap-3">
               <Link
                 to="/work"
                 className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
               >
-                See our work <ArrowUpRight className="h-4 w-4" />
+                {thankYou.seeWork} <ArrowUpRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/"
                 className="inline-flex items-center rounded-full border border-border px-7 py-3.5 text-sm font-semibold transition-colors hover:border-brand"
               >
-                Back home
+                {thankYou.backHome}
               </Link>
             </div>
           </div>
         </section>
 
         <section className="mx-auto max-w-6xl px-6 py-20">
-          <h2 className="text-2xl font-black tracking-tight">While you wait</h2>
+          <h2 className="text-2xl font-black tracking-tight">{thankYou.whileWaitTitle}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {posts.slice(0, 3).map((post) => (
               <Link

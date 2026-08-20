@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { z } from "zod";
+
 import { Mail, Clock, Globe, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { services } from "@/lib/services-data";
 import { submitContactForm } from "@/lib/leads.functions";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -30,27 +31,14 @@ export const Route = createFileRoute("/contact")({
   component: ContactPage,
 });
 
-const contactSchema = z.object({
-  name: z.string().trim().min(2, "Please enter your name").max(100, "Name must be under 100 characters"),
-  email: z.string().trim().email("Enter a valid email address").max(255, "Email must be under 255 characters"),
-  company: z.string().trim().max(120, "Company must be under 120 characters").optional(),
-  service: z.string().trim().min(1, "Choose a service"),
-  budget: z.string().trim().min(1, "Choose a budget range"),
-  message: z
-    .string()
-    .trim()
-    .min(20, "Tell us a little more — at least 20 characters")
-    .max(2000, "Message must be under 2000 characters"),
-});
-
-type Errors = Partial<Record<keyof z.infer<typeof contactSchema>, string>>;
-
-const budgets = ["Under $1,000", "$1,000 – $5,000", "$5,000 – $15,000", "$15,000+", "Not sure yet"];
+type Errors = Partial<Record<"name" | "email" | "company" | "service" | "budget" | "message", string>>;
 
 const fieldClass =
   "mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm outline-none transition-colors focus:border-brand";
 
 function ContactPage() {
+  const { t } = useI18n();
+  const { contact } = t;
   const navigate = useNavigate();
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -61,21 +49,27 @@ function ContactPage() {
     if (submitting) return;
 
     const form = new FormData(e.currentTarget);
-    const parsed = contactSchema.safeParse({
+    const formData = {
       name: String(form.get("name") ?? ""),
       email: String(form.get("email") ?? ""),
       company: String(form.get("company") ?? ""),
       service: String(form.get("service") ?? ""),
       budget: String(form.get("budget") ?? ""),
       message: String(form.get("message") ?? ""),
-    });
+    };
 
-    if (!parsed.success) {
-      const next: Errors = {};
-      for (const issue of parsed.error.issues) {
-        const key = issue.path[0] as keyof Errors;
-        if (key && !next[key]) next[key] = issue.message;
-      }
+    const next: Errors = {};
+    if (!formData.name.trim() || formData.name.trim().length < 2) next.name = contact.errors.name;
+    else if (formData.name.trim().length > 100) next.name = contact.errors.nameMax;
+    if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) next.email = contact.errors.email;
+    else if (formData.email.trim().length > 255) next.email = contact.errors.emailMax;
+    if (formData.company.trim().length > 120) next.company = contact.errors.companyMax;
+    if (!formData.service.trim()) next.service = contact.errors.service;
+    if (!formData.budget.trim()) next.budget = contact.errors.budget;
+    if (!formData.message.trim() || formData.message.trim().length < 20) next.message = contact.errors.messageMin;
+    else if (formData.message.trim().length > 2000) next.message = contact.errors.messageMax;
+
+    if (Object.keys(next).length > 0) {
       setErrors(next);
       return;
     }
@@ -85,7 +79,7 @@ function ContactPage() {
     setSubmitting(true);
 
     try {
-      await submitContactForm({ data: parsed.data });
+      await submitContactForm({ data: formData });
       navigate({ to: "/thank-you" });
     } catch (err) {
       console.error("Contact form submission failed:", err);
@@ -101,13 +95,12 @@ function ContactPage() {
       <main>
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Contact</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{contact.eyebrow}</p>
             <h1 className="mt-4 max-w-3xl text-5xl font-black tracking-tight md:text-6xl">
-              Tell us what you're <span className="text-brand">building</span>
+              {contact.heroTitlePrefix}<span className="text-brand">{contact.heroTitleHighlight}</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Send the brief, however rough. You get a scoped reply and a free brand audit within
-              48 hours — no pitch deck, no pressure.
+              {contact.heroBody}
             </p>
           </div>
         </section>
@@ -116,46 +109,46 @@ function ContactPage() {
           <form noValidate onSubmit={onSubmit} className="rounded-3xl border border-border bg-card p-8 md:p-10">
             <div className="grid gap-6 sm:grid-cols-2">
               <div>
-                <label htmlFor="name" className="text-sm font-bold">Name</label>
-                <input id="name" name="name" maxLength={100} className={fieldClass} placeholder="Jane Cooper" />
+                <label htmlFor="name" className="text-sm font-bold">{contact.form.name}</label>
+                <input id="name" name="name" maxLength={100} className={fieldClass} placeholder={contact.form.namePlaceholder} />
                 {errors.name && <p className="mt-2 text-xs font-semibold text-destructive">{errors.name}</p>}
               </div>
               <div>
-                <label htmlFor="email" className="text-sm font-bold">Email</label>
-                <input id="email" name="email" type="email" maxLength={255} className={fieldClass} placeholder="jane@company.com" />
+                <label htmlFor="email" className="text-sm font-bold">{contact.form.email}</label>
+                <input id="email" name="email" type="email" maxLength={255} className={fieldClass} placeholder={contact.form.emailPlaceholder} />
                 {errors.email && <p className="mt-2 text-xs font-semibold text-destructive">{errors.email}</p>}
               </div>
               <div>
-                <label htmlFor="company" className="text-sm font-bold">Company <span className="font-normal text-muted-foreground">(optional)</span></label>
-                <input id="company" name="company" maxLength={120} className={fieldClass} placeholder="Northwind" />
+                <label htmlFor="company" className="text-sm font-bold">{contact.form.company} <span className="font-normal text-muted-foreground">{contact.form.optional}</span></label>
+                <input id="company" name="company" maxLength={120} className={fieldClass} placeholder={contact.form.companyPlaceholder} />
                 {errors.company && <p className="mt-2 text-xs font-semibold text-destructive">{errors.company}</p>}
               </div>
               <div>
-                <label htmlFor="budget" className="text-sm font-bold">Budget</label>
+                <label htmlFor="budget" className="text-sm font-bold">{contact.form.budget}</label>
                 <select id="budget" name="budget" defaultValue="" className={fieldClass}>
-                  <option value="" disabled>Select a range</option>
-                  {budgets.map((b) => <option key={b} value={b}>{b}</option>)}
+                  <option value="" disabled>{contact.form.selectRange}</option>
+                  {contact.budgets.map((b) => <option key={b} value={b}>{b}</option>)}
                 </select>
                 {errors.budget && <p className="mt-2 text-xs font-semibold text-destructive">{errors.budget}</p>}
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="service" className="text-sm font-bold">Service needed</label>
+                <label htmlFor="service" className="text-sm font-bold">{contact.form.service}</label>
                 <select id="service" name="service" defaultValue="" className={fieldClass}>
-                  <option value="" disabled>Select a service</option>
+                  <option value="" disabled>{contact.form.selectService}</option>
                   {services.map((s) => <option key={s.slug} value={s.title}>{s.title}</option>)}
-                  <option value="Multiple / not sure">Multiple / not sure</option>
+                  <option value="Multiple / not sure">{contact.form.multipleService}</option>
                 </select>
                 {errors.service && <p className="mt-2 text-xs font-semibold text-destructive">{errors.service}</p>}
               </div>
               <div className="sm:col-span-2">
-                <label htmlFor="message" className="text-sm font-bold">Project details</label>
+                <label htmlFor="message" className="text-sm font-bold">{contact.form.message}</label>
                 <textarea
                   id="message"
                   name="message"
                   rows={6}
                   maxLength={2000}
                   className={fieldClass}
-                  placeholder="What are you building, who is it for, and when does it need to be live?"
+                  placeholder={contact.form.messagePlaceholder}
                 />
                 {errors.message && <p className="mt-2 text-xs font-semibold text-destructive">{errors.message}</p>}
               </div>
@@ -169,30 +162,30 @@ function ContactPage() {
               disabled={submitting}
               className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5 disabled:opacity-70"
             >
-              {submitting ? "Sending…" : "Send project brief"} <ArrowUpRight className="h-4 w-4" />
+              {submitting ? contact.form.sending : contact.form.submit} <ArrowUpRight className="h-4 w-4" />
             </button>
             <p className="mt-4 text-xs text-muted-foreground">
-              By sending this you agree to our <Link to="/privacy" className="underline hover:text-brand">privacy policy</Link>.
+              {contact.form.agreementPrefix} <Link to="/privacy" className="underline hover:text-brand">{contact.form.agreementLink}</Link>{contact.form.agreementSuffix}
             </p>
           </form>
 
           <aside className="space-y-8">
             <div className="rounded-2xl border border-border p-7">
               <Mail className="h-6 w-6 text-brand" />
-              <h2 className="mt-4 font-bold">Email us directly</h2>
+              <h2 className="mt-4 font-bold">{contact.aside.emailTitle}</h2>
               <a href="mailto:hello@mariostudio.com" className="mt-1 block text-sm text-muted-foreground hover:text-brand">
                 hello@mariostudio.com
               </a>
             </div>
             <div className="rounded-2xl border border-border p-7">
               <Clock className="h-6 w-6 text-brand" />
-              <h2 className="mt-4 font-bold">Response time</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Within 48 hours, Monday to Friday, 09:00–18:00 CET.</p>
+              <h2 className="mt-4 font-bold">{contact.aside.responseTitle}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{contact.aside.responseBody}</p>
             </div>
             <div className="rounded-2xl border border-border p-7">
               <Globe className="h-6 w-6 text-brand" />
-              <h2 className="mt-4 font-bold">Where we work</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Fully remote across Europe, Africa and North America.</p>
+              <h2 className="mt-4 font-bold">{contact.aside.whereTitle}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{contact.aside.whereBody}</p>
             </div>
           </aside>
         </section>

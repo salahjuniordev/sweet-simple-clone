@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { formatPostDate } from "@/lib/blog-data";
 import { useQuery } from "@tanstack/react-query";
 import { getPosts } from "@/lib/cms-queries";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/blog/")({
   head: () => ({
@@ -32,8 +33,11 @@ export const Route = createFileRoute("/blog/")({
 });
 
 function BlogIndex() {
+  const { t } = useI18n();
+  const { blogPage } = t;
+
   const [search, setSearch] = useState("");
-  const [active, setActive] = useState("All");
+  const [active, setActive] = useState(blogPage.all);
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ["posts"],
@@ -42,15 +46,15 @@ function BlogIndex() {
 
   const categories = useMemo(
     () => {
-      if (!posts) return ["All"];
-      return ["All", ...Array.from(new Set(posts.map((p) => p.category)))];
+    if (!posts) return [blogPage.all];
+    return [blogPage.all, ...Array.from(new Set(posts.map((p) => p.category)))];
     },
     [posts],
   );
 
   const visible = useMemo(() => {
     if (!posts) return [];
-    let filtered = active === "All" ? posts : posts.filter((p) => p.category === active);
+    let filtered = active === blogPage.all ? posts : posts.filter((p) => p.category === active);
     
     if (search) {
       const s = search.toLowerCase();
@@ -70,13 +74,12 @@ function BlogIndex() {
       <main>
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Journal</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{blogPage.eyebrow}</p>
             <h1 className="mt-4 max-w-2xl text-5xl font-black tracking-tight md:text-6xl">
-              Notes from the <span className="text-brand">studio</span>
+              {blogPage.titleA} <span className="text-brand">{blogPage.titleB}</span>
             </h1>
             <p className="mt-5 max-w-xl text-muted-foreground">
-              What we learn shipping brands, websites and campaigns — written so you can use it,
-              whether or not you hire us.
+              {blogPage.sub}
             </p>
           </div>
         </section>
@@ -104,7 +107,7 @@ function BlogIndex() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input 
                 type="text"
-                placeholder="Search articles..."
+                placeholder={blogPage.searchPlaceholder}
                 value={search}
                 onChange={e => setSearch(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-full text-sm focus:outline-none focus:border-brand"
@@ -136,7 +139,7 @@ function BlogIndex() {
                     <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
                   </div>
                   <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold">
-                    Read article <ArrowUpRight className="h-4 w-4" />
+                    {blogPage.readArticle} <ArrowUpRight className="h-4 w-4" />
                   </span>
                 </Link>
               ))}

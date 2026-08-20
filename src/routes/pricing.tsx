@@ -12,6 +12,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { services } from "@/lib/services-data";
 import { faqs } from "@/lib/site-content";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/pricing")({
   head: () => ({
@@ -36,14 +37,10 @@ export const Route = createFileRoute("/pricing")({
   component: PricingPage,
 });
 
-const included = [
-  "A named lead you talk to directly",
-  "Shared board with weekly written updates",
-  "All source files and repositories on handover",
-  "Fixed quote before work starts — no surprise invoices",
-];
-
 function PricingPage() {
+  const { t } = useI18n();
+  const { pricing } = t;
+
   const { data: services } = useQuery({
     queryKey: ["services"],
     queryFn: getServices,
@@ -59,13 +56,12 @@ function PricingPage() {
       <main>
         <section className="border-b border-border">
           <div className="mx-auto max-w-6xl px-6 py-20">
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">Pricing</p>
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-brand">{pricing.eyebrow}</p>
             <h1 className="mt-4 max-w-3xl text-5xl font-black tracking-tight md:text-6xl">
-              Web development <span className="text-brand">pricing</span>
+              {pricing.heroTitlePrefix}<span className="text-brand">{pricing.heroTitleHighlight}</span>
             </h1>
             <p className="mt-5 max-w-xl text-lg text-muted-foreground">
-              Prices for our web development tiers. Anything custom gets a fixed quote
-              after a free 30-minute scoping call.
+              {pricing.heroBody}
             </p>
           </div>
         </section>
@@ -81,7 +77,7 @@ function PricingPage() {
               >
                 {p.featured && (
                   <span className="mb-4 self-start rounded-full bg-brand px-3 py-1 text-xs font-bold uppercase tracking-wider text-brand-foreground">
-                    Most popular
+                    {pricing.mostPopular}
                   </span>
                 )}
                 <h3 className="text-lg font-bold">{p.name}</h3>
@@ -105,22 +101,22 @@ function PricingPage() {
                       : "border border-border hover:border-brand"
                   }`}
                 >
-                  Choose {p.name}
+                  {pricing.choosePrefix} {p.name}
                 </Link>
               </div>
             ))}
           </div>
           <p className="mt-10 text-xs text-muted-foreground text-center">
-            All prices in USD, excluding tax. Retainers are billed monthly and can be cancelled anytime.
+            {pricing.disclaimer}
           </p>
         </section>
 
         <section className="border-y border-border bg-secondary">
           <div className="mx-auto grid max-w-6xl gap-12 px-6 py-20 md:grid-cols-2">
             <div>
-              <h2 className="text-3xl font-black tracking-tight md:text-4xl">Included in every plan</h2>
+              <h2 className="text-3xl font-black tracking-tight md:text-4xl">{pricing.includedTitle}</h2>
               <ul className="mt-8 space-y-4">
-                {included.map((i) => (
+                {pricing.included.map((i) => (
                   <li key={i} className="flex gap-3">
                     <Check className="mt-0.5 h-5 w-5 shrink-0 text-brand" />
                     <span className="text-sm text-muted-foreground">{i}</span>
@@ -129,24 +125,22 @@ function PricingPage() {
               </ul>
             </div>
             <div>
-              <h2 className="text-3xl font-black tracking-tight md:text-4xl">Bundle and save</h2>
+              <h2 className="text-3xl font-black tracking-tight md:text-4xl">{pricing.bundleTitle}</h2>
               <p className="mt-5 text-muted-foreground">
-                Booking brand, website and marketing together removes vendor handoffs and typically
-                lands 15–20% below the sum of the individual packages. Tell us the scope and we will
-                price the bundle in writing.
+                {pricing.bundleBody}
               </p>
               <Link
                 to="/contact"
                 className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
               >
-                Get a bundled quote <ArrowUpRight className="h-4 w-4" />
+                {pricing.bundleButton} <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
           </div>
         </section>
 
         <section className="mx-auto max-w-3xl px-6 py-20">
-          <h2 className="text-3xl font-black tracking-tight md:text-4xl">Pricing questions</h2>
+          <h2 className="text-3xl font-black tracking-tight md:text-4xl">{pricing.questionsTitle}</h2>
           <Accordion type="single" collapsible className="mt-8 w-full">
             {faqs.map((f, i) => (
               <AccordionItem key={f.q} value={`p-${i}`}>
