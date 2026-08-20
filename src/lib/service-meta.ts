@@ -20,7 +20,7 @@ export const serviceMetaDescriptions: Record<string, string> = {
     "Grow your business with digital marketing focused on measurable leads and revenue. Mario Studio manages search, social and email campaigns with clear reporting.",
   "motion-design":
     "Motion design for brands and digital products, including animated logos, UI motion, Lottie files and high-resolution video designed to increase engagement.",
-  "e-commerce-strategy":
+  "ecommerce-strategy":
     "Build a stronger e-commerce business with strategy focused on customer journeys, conversion, retention and measurable growth across your online store.",
   "ai-automation":
     "Automate repetitive business processes with custom AI chatbots, integrations and workflows from Mario Studio, helping teams save time and scale operations.",
