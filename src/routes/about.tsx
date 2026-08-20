@@ -10,7 +10,7 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Meet the specialists behind Mario Studio. We are a remote-first digital team dedicated to removing handoffs between design, code, and marketing.",
+          "Learn about Mario Studio, a remote digital studio built to combine strategy, branding, design, development and marketing under one team.",
       },
       { property: "og:title", content: "About Mario Studio — Story, Team & Values" },
       {

@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Mario Studio is a full-service digital partner building sharp brands and fast websites. Experts in web development, identity branding, UI/UX, and digital marketing.",
+          "Mario Studio is a digital studio based in Canada, delivering branding, UI/UX, web development, video and marketing for businesses in Canada, Cameroon and worldwide.",
       },
       { property: "og:title", content: "Mario Studio — Digital Services & Brand Design" },
       {

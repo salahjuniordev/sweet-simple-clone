@@ -15,7 +15,7 @@ export const Route = createFileRoute("/services/")({
       {
         name: "description",
         content:
-          "Premium digital services working together to grow your brand. Experts in identity, UI/UX, fast websites, video production, AI automation, and digital marketing.",
+          "Explore Mario Studio's digital services, including web development, branding, UI/UX design, graphic design, video, marketing, AI automation and more.",
       },
       { property: "og:title", content: "Digital Services & Pricing | Mario Studio" },
       {

@@ -12,7 +12,7 @@ export const Route = createFileRoute("/work/")({
       {
         name: "description",
         content:
-          "Browse our portfolio of rebrands, website builds, and video production pipelines. Measurable results for every project.",
+          "Explore Mario Studio case studies in branding, web development, UI/UX, marketing and digital design, with measurable results and real business outcomes.",
       },
       { property: "og:title", content: "Our Work — Case Studies | Mario Studio" },
       { property: "og:description", content: "Selected projects and the measurable results they produced." },
