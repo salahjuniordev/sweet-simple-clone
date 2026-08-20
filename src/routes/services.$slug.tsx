@@ -11,6 +11,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getServiceFaqs, serviceFaqs } from "@/lib/service-faqs";
+import { serviceMetaDescriptions } from "@/lib/service-meta";
 import { caseStudyForService } from "@/lib/work-data";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { useQuery } from "@tanstack/react-query";
