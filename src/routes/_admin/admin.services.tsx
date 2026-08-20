@@ -334,6 +334,7 @@ function AdminServices() {
               <TableHead>{t.admin.services.tableTitle}</TableHead>
               <TableHead>{t.admin.services.tableSlug}</TableHead>
               <TableHead>{t.admin.services.tableIcon}</TableHead>
+              <TableHead>Prices</TableHead>
               <TableHead className="text-right">{t.admin.services.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
@@ -343,7 +344,11 @@ function AdminServices() {
                 <TableCell className="font-bold">{s.title}</TableCell>
                 <TableCell className="text-muted-foreground">{s.slug}</TableCell>
                 <TableCell>{s.icon}</TableCell>
+                <TableCell>
+                  <PriceEditor service={s} />
+                </TableCell>
                 <TableCell className="text-right">
+
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="icon" onClick={() => {
                       setEditingService(s);
