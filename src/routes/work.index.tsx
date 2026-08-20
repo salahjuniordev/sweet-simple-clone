@@ -18,6 +18,7 @@ export const Route = createFileRoute("/work/")({
       { property: "og:description", content: "See how Mario Studio helps businesses grow through branding, web development, UI/UX, marketing and digital design." },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/work" },
+      { property: "og:image", content: "https://mariostudio.com/logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

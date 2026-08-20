@@ -29,6 +29,7 @@ export const Route = createFileRoute("/pricing")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://mariostudio.com/pricing" },
+      { property: "og:image", content: "https://mariostudio.com/logo.png" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),

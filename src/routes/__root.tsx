@@ -162,6 +162,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
             : "Web development, identity branding, UI/UX, video editing, brand audit, maintenance, security and digital marketing under one studio.",
         },
         { property: "og:type", content: "website" },
+        { property: "og:image", content: "https://mariostudio.com/logo.png" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:site", content: "@mariostudio" },
       ],
