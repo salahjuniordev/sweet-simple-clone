@@ -334,6 +334,7 @@ function AdminServices() {
               <TableHead>{t.admin.services.tableTitle}</TableHead>
               <TableHead>{t.admin.services.tableSlug}</TableHead>
               <TableHead>{t.admin.services.tableIcon}</TableHead>
+              <TableHead>Prices</TableHead>
               <TableHead className="text-right">{t.admin.services.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
@@ -343,7 +344,11 @@ function AdminServices() {
                 <TableCell className="font-bold">{s.title}</TableCell>
                 <TableCell className="text-muted-foreground">{s.slug}</TableCell>
                 <TableCell>{s.icon}</TableCell>
+                <TableCell>
+                  <PriceEditor service={s} />
+                </TableCell>
                 <TableCell className="text-right">
+
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="icon" onClick={() => {
                       setEditingService(s);
@@ -372,7 +377,72 @@ function AdminServices() {
   );
 }
 
+type Plan = { name: string; price: string; note?: string; features: string[]; featured?: boolean };
+
+function PriceEditor({ service }: { service: any }) {
+  const queryClient = useQueryClient();
+  const plans: Plan[] = Array.isArray(service.plans) ? (service.plans as Plan[]) : [];
+  const [prices, setPrices] = useState<string[]>(plans.map((p) => p?.price ?? ""));
+
+  useEffect(() => {
+    setPrices(plans.map((p) => p?.price ?? ""));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [service.id, JSON.stringify(service.plans)]);
+
+  const saveMutation = useMutation({
+    mutationFn: async (index: number) => {
+      const value = prices[index]?.trim() ?? "";
+      if (!value) throw new Error("Price cannot be empty");
+      const next = plans.map((p, i) => (i === index ? { ...p, price: value } : p));
+      const { error } = await supabase
+        .from("cms_services")
+        .update({ plans: next as any })
+        .eq("id", service.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-services"] });
+      queryClient.invalidateQueries({ queryKey: ["services"] });
+      queryClient.invalidateQueries({ queryKey: ["service"] });
+      toast.success("Price updated");
+    },
+    onError: (error: any) => toast.error(error.message ?? "Failed to update price"),
+  });
+
+  if (plans.length === 0) return <span className="text-xs text-muted-foreground">—</span>;
+
+  return (
+    <div className="space-y-1.5 min-w-[220px]">
+      {plans.map((p, i) => (
+        <div key={`${service.id}-${i}`} className="flex items-center gap-1.5">
+          <span className="w-20 shrink-0 text-xs text-muted-foreground truncate">{p.name}</span>
+          <Input
+            className="h-8 text-xs"
+            value={prices[i] ?? ""}
+            onChange={(e) => {
+              const next = [...prices];
+              next[i] = e.target.value;
+              setPrices(next);
+            }}
+          />
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 shrink-0"
+            disabled={saveMutation.isPending || !prices[i]?.trim() || prices[i] === (p.price ?? "")}
+            onClick={() => saveMutation.mutate(i)}
+          >
+            <Save className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function StringListFieldArray({ name, control }: { name: string, control: any }) {
+
   const { t } = useI18n();
   const { fields, append, remove } = useFieldArray({
     control,
