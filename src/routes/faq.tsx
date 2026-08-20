@@ -19,7 +19,7 @@ export const Route = createFileRoute("/faq")({
       {
         name: "description",
         content:
-          "Find answers to common questions about project timelines, pricing, code ownership, and our nine core digital services.",
+          "Find answers to common questions about Mario Studio services, pricing, timelines, ownership, support, technology, security and working remotely.",
       },
       { property: "og:title", content: "Frequently Asked Questions | Mario Studio" },
       {

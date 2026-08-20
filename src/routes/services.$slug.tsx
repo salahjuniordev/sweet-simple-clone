@@ -11,6 +11,7 @@ import {
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { getServiceFaqs, serviceFaqs } from "@/lib/service-faqs";
+import { serviceMetaDescriptions } from "@/lib/service-meta";
 import { caseStudyForService } from "@/lib/work-data";
 import { ScrollReveal } from "@/components/scroll-reveal";
 import { useQuery } from "@tanstack/react-query";
@@ -37,7 +38,9 @@ export const Route = createFileRoute("/services/$slug")({
     }
     const { service } = loaderData;
     const title = `${service.title} — Digital Services | Mario Studio`;
-    const description = `${service.tagline}. ${service.desc_short} Expert ${service.title.toLowerCase()} starting from ${(service.plans as any)?.[0]?.price ?? "$0"}.`;
+    const description =
+      serviceMetaDescriptions[service.slug] ??
+      `${service.tagline}. ${service.desc_short} Expert ${service.title.toLowerCase()} starting from ${(service.plans as any)?.[0]?.price ?? "$0"}.`;
     const faqItems = serviceFaqs[service.slug as keyof typeof serviceFaqs] ?? [];
     const absoluteUrl = `https://mariostudio.com/services/${service.slug}`;
     const imageUrl = `https://mariostudio.com/logo.png`; // Using the static logo as default OG image

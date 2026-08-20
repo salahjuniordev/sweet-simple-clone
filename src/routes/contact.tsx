@@ -13,7 +13,7 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Ready to build something sharp? Contact Mario Studio for a free brand audit and a transparent project quote.",
+          "Start a project with Mario Studio. Tell us what you're building and receive a scoped response plus a free brand audit within 48 hours.",
       },
       { property: "og:title", content: "Start a Project | Mario Studio" },
       {
