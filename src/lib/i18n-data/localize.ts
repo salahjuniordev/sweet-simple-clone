@@ -25,15 +25,29 @@ export function localizeList<T extends { slug?: string | null }>(
   return items.map((i) => localizeItem(i, overrides, lang));
 }
 
+/** Prices are managed in the database, so DB plan prices always win over FR copy. */
+function keepDbPrices<T extends Record<string, any>>(original: T, localized: T): T {
+  const dbPlans = original?.["plans"];
+  const frPlans = localized?.["plans"];
+  if (!Array.isArray(dbPlans) || !Array.isArray(frPlans)) return localized;
+  return {
+    ...localized,
+    plans: frPlans.map((p: any, i: number) =>
+      dbPlans[i]?.price ? { ...p, price: dbPlans[i].price } : p,
+    ),
+  };
+}
+
 export function useLocalizedServices<T extends { slug?: string | null }>(items: T[] | undefined | null) {
   const { lang } = useI18n();
-  return localizeList(items, servicesFr, lang);
+  return (items ?? []).map((i) => keepDbPrices(i as any, localizeItem(i, servicesFr, lang) as any)) as T[];
 }
 
 export function useLocalizedService<T extends { slug?: string | null }>(item: T | undefined | null) {
   const { lang } = useI18n();
-  return item ? localizeItem(item, servicesFr, lang) : item;
+  return item ? (keepDbPrices(item as any, localizeItem(item, servicesFr, lang) as any) as T) : item;
 }
+
 
 export function useLocalizedPosts<T extends { slug?: string | null }>(items: T[] | undefined | null) {
   const { lang } = useI18n();
