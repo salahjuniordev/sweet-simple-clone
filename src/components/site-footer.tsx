@@ -111,6 +111,12 @@ export function SiteFooter() {
                   hello@mariostudio.com
                 </a>
               </li>
+              <li>
+                <a href="tel:+237696262000" className="hover:text-brand">+237 696 262 000</a>
+              </li>
+              <li>
+                <a href="tel:+237683693011" className="hover:text-brand">+237 683 693 011</a>
+              </li>
               <li>Remote — Europe, Africa &amp; North America</li>
               <li>Mon–Fri, 09:00–18:00 CET</li>
               <li><Link to="/privacy" className="hover:text-brand">Privacy policy</Link></li>

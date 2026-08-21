@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 
-import { Mail, Clock, Globe, ArrowUpRight } from "lucide-react";
+import { Mail, Clock, Globe, Phone, ArrowUpRight } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { services } from "@/lib/services-data";
@@ -181,6 +181,14 @@ function ContactPage() {
               <Clock className="h-6 w-6 text-brand" />
               <h2 className="mt-4 font-bold">{contact.aside.responseTitle}</h2>
               <p className="mt-1 text-sm text-muted-foreground">{contact.aside.responseBody}</p>
+            </div>
+            <div className="rounded-2xl border border-border p-7">
+              <Phone className="h-6 w-6 text-brand" />
+              <h2 className="mt-4 font-bold">Call us</h2>
+              <div className="mt-1 space-y-1">
+                <a href="tel:+237696262000" className="block text-sm text-muted-foreground hover:text-brand">+237 696 262 000</a>
+                <a href="tel:+237683693011" className="block text-sm text-muted-foreground hover:text-brand">+237 683 693 011</a>
+              </div>
             </div>
             <div className="rounded-2xl border border-border p-7">
               <Globe className="h-6 w-6 text-brand" />
