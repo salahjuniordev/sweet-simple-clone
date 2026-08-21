@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { services } from "@/lib/services-data";
+import { useI18n } from "@/lib/i18n";
 
 function FacebookIcon({ className }: { className?: string }) {
   return (
@@ -41,6 +42,8 @@ const socials = [
 ];
 
 export function SiteFooter() {
+  const { t } = useI18n();
+  const f = t.footer;
   return (
     <footer className="border-t border-border bg-secondary">
       <div className="mx-auto max-w-6xl px-6 py-16">
@@ -50,8 +53,7 @@ export function SiteFooter() {
               <img src="/logo.png" alt="Mario Studio" className="h-[90px] w-auto" />
             </Link>
             <p className="mt-5 max-w-xs text-sm text-muted-foreground">
-              A full-service digital studio: identity, design, development, video and marketing —
-              built by one team that stays after launch.
+              {f.tagline}
             </p>
             <div className="mt-6 flex gap-2.5">
               {socials.map(({ href, label, Icon, color }) => (
@@ -70,7 +72,7 @@ export function SiteFooter() {
           </div>
 
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Services</h2>
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{f.services}</h2>
             <ul className="mt-5 space-y-2.5 text-sm text-muted-foreground">
               {services.slice(0, 6).map((s) => (
                 <li key={s.slug}>
@@ -85,26 +87,26 @@ export function SiteFooter() {
               ))}
               <li>
                 <Link to="/services" className="font-semibold transition-colors hover:text-brand">
-                  All services
+                  {f.allServices}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Studio</h2>
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{f.studio}</h2>
             <ul className="mt-5 space-y-2.5 text-sm text-muted-foreground">
-              <li><Link to="/about" className="hover:text-brand">About</Link></li>
-              <li><Link to="/work" className="hover:text-brand">Work</Link></li>
-              <li><Link to="/pricing" className="hover:text-brand">Pricing</Link></li>
-              <li><Link to="/blog" className="hover:text-brand">Blog</Link></li>
-              <li><Link to="/faq" className="hover:text-brand">FAQs</Link></li>
-              <li><Link to="/contact" className="hover:text-brand">Contact</Link></li>
+              <li><Link to="/about" className="hover:text-brand">{f.about}</Link></li>
+              <li><Link to="/work" className="hover:text-brand">{f.work}</Link></li>
+              <li><Link to="/pricing" className="hover:text-brand">{f.pricing}</Link></li>
+              <li><Link to="/blog" className="hover:text-brand">{f.blog}</Link></li>
+              <li><Link to="/faq" className="hover:text-brand">{f.faq}</Link></li>
+              <li><Link to="/contact" className="hover:text-brand">{f.contact}</Link></li>
             </ul>
           </div>
 
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">Contact</h2>
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-brand">{f.contactTitle}</h2>
             <ul className="mt-5 space-y-2.5 text-sm text-muted-foreground">
               <li>
                 <a href="mailto:hello@mariostudio.com" className="hover:text-brand">
@@ -117,17 +119,17 @@ export function SiteFooter() {
               <li>
                 <a href="tel:+237683693011" className="hover:text-brand">+237 683 693 011</a>
               </li>
-              <li>Remote — Europe, Africa &amp; North America</li>
-              <li>Mon–Fri, 09:00–18:00 CET</li>
-              <li><Link to="/privacy" className="hover:text-brand">Privacy policy</Link></li>
-              <li><Link to="/terms" className="hover:text-brand">Terms of service</Link></li>
+              <li>{f.location}</li>
+              <li>{f.hours}</li>
+              <li><Link to="/privacy" className="hover:text-brand">{f.privacy}</Link></li>
+              <li><Link to="/terms" className="hover:text-brand">{f.terms}</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="mt-14 flex flex-col items-center justify-between gap-3 border-t border-border pt-7 text-sm text-muted-foreground sm:flex-row">
-          <p>© {new Date().getFullYear()} Mario Studio. All rights reserved.</p>
-          <p>Built in-house. No vendor lock-in.</p>
+          <p>© {new Date().getFullYear()} Mario Studio. {f.allRights}</p>
+          <p>{f.builtInHouse}</p>
         </div>
       </div>
     </footer>

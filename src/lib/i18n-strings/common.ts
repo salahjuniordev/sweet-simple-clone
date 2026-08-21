@@ -38,8 +38,8 @@ export const commonEn = {
     privacy: "Privacy policy",
     terms: "Terms of service",
     builtInHouse: "Built in-house. No vendor lock-in.",
-  },
-};
+    allRights: "All rights reserved.",
+  },};
 
 export const commonFr: typeof commonEn = {
   nav: {
@@ -81,5 +81,5 @@ export const commonFr: typeof commonEn = {
     privacy: "Politique de confidentialité",
     terms: "Conditions d'utilisation",
     builtInHouse: "Réalisé en interne. Aucune dépendance fournisseur.",
-  },
-};
+    allRights: "Tous droits réservés.",
+  },};

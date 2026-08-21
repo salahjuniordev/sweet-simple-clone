@@ -216,7 +216,7 @@ function ContactPage() {
             </div>
             <div className="rounded-2xl border border-border p-7">
               <Phone className="h-6 w-6 text-brand" />
-              <h2 className="mt-4 font-bold">Call us</h2>
+              <h2 className="mt-4 font-bold">{contact.aside.callUs}</h2>
               <div className="mt-1 space-y-1">
                 <a href="tel:+237696262000" className="block text-sm text-muted-foreground hover:text-brand">+237 696 262 000</a>
                 <a href="tel:+237683693011" className="block text-sm text-muted-foreground hover:text-brand">+237 683 693 011</a>
@@ -228,8 +228,8 @@ function ContactPage() {
               <p className="mt-1 text-sm text-muted-foreground">{contact.aside.whereBody}</p>
             </div>
             <div className="rounded-2xl border border-border p-7">
-              <h2 className="font-bold">Follow us</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Stay connected on social media</p>
+              <h2 className="font-bold">{contact.aside.followUs}</h2>
+              <p className="mt-1 text-sm text-muted-foreground">{contact.aside.stayConnected}</p>
               <div className="mt-4 flex gap-2.5">
                 {([
                   { href: "https://www.facebook.com", label: "Facebook", Icon: FacebookIcon, color: "hover:text-[#1877F2]" },

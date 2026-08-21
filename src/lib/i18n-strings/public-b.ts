@@ -143,6 +143,10 @@ export const publicBEn = {
       responseBody: "Within 48 hours, Monday to Friday, 09:00–18:00 CET.",
       whereTitle: "Where we work",
       whereBody: "Fully remote across Europe, Africa and North America.",
+      callUs: "Call us",
+      followUs: "Follow us",
+      stayConnected: "Stay connected on social media",
+      chatOnWhatsApp: "Chat on WhatsApp",
     },
   },
   thankYou: {
@@ -511,6 +515,10 @@ export const publicBFr: typeof publicBEn = {
       responseBody: "Sous 48 heures, du lundi au vendredi, 09h00–18h00 CET.",
       whereTitle: "Où nous travaillons",
       whereBody: "Entièrement à distance, entre l'Europe, l'Afrique et l'Amérique du Nord.",
+      callUs: "Appelez-nous",
+      followUs: "Suivez-nous",
+      stayConnected: "Restez connecté sur les réseaux sociaux",
+      chatOnWhatsApp: "Discuter sur WhatsApp",
     },
   },
   thankYou: {
