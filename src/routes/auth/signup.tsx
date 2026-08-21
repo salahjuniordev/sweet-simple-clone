@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/auth/signup")({
   component: SignupPage,
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/auth/signup")({
 });
 
 function SignupPage() {
+  const { t } = useI18n();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -43,14 +45,14 @@ function SignupPage() {
         toast.error(error.message);
       } else if (data.session) {
         const { claimed } = await claimFirstAdmin();
-        toast.success(claimed ? "Account created — you are now the admin" : "Account created");
+        toast.success(claimed ? t.auth.accountCreatedAdmin : t.auth.accountCreated);
         router.navigate({ to: "/admin" });
       } else {
         setSent(true);
-        toast.success("Check your email to confirm your account");
+        toast.success(t.auth.confirmEmail);
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Network error — please try again");
+      toast.error(err instanceof Error ? err.message : t.auth.networkError);
     } finally {
       setLoading(false);
     }
@@ -60,35 +62,35 @@ function SignupPage() {
     <div className="min-h-screen flex items-center justify-center bg-secondary/30 px-6">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-black tracking-tight">Create your account</CardTitle>
-          <CardDescription>The first account to sign in becomes the admin</CardDescription>
+          <CardTitle className="text-2xl font-black tracking-tight">{t.auth.signupTitle}</CardTitle>
+          <CardDescription>{t.auth.signupDescription}</CardDescription>
         </CardHeader>
         <CardContent>
           {sent ? (
             <p className="text-sm text-muted-foreground text-center">
-              We sent a confirmation link to <strong>{email}</strong>. Click it, then sign in.
+              {t.auth.confirmEmailSent} <strong>{email}</strong>. {t.auth.confirmEmailClick}
             </p>
           ) : (
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t.auth.email}</Label>
                 <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">{t.auth.password}</Label>
                 <Input id="password" type="password" minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} required />
               </div>
               <Button type="submit" className="w-full bg-brand text-brand-foreground font-bold" disabled={loading}>
-                {loading ? "Creating account..." : "Create account"}
+                {loading ? t.auth.creatingAccount : t.auth.createAccount}
               </Button>
             </form>
           )}
         </CardContent>
         <CardFooter className="flex flex-col gap-3 text-sm text-muted-foreground">
           <p>
-            Already have an account? <Link to="/auth/login" className="text-brand font-bold hover:underline">Sign in</Link>
+            {t.auth.haveAccount} <Link to="/auth/login" className="text-brand font-bold hover:underline">{t.auth.signInLink}</Link>
           </p>
-          <Link to="/" className="hover:text-brand transition-colors text-xs uppercase tracking-widest font-bold">Back to home</Link>
+          <Link to="/" className="hover:text-brand transition-colors text-xs uppercase tracking-widest font-bold">{t.auth.backToHome}</Link>
         </CardFooter>
       </Card>
     </div>

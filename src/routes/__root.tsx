@@ -17,6 +17,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider, useI18n } from "@/lib/i18n";
 
 function NotFoundComponent() {
+  const { t } = useI18n();
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-6">
       {/* Background Decorative Elements */}
@@ -30,19 +31,19 @@ function NotFoundComponent() {
           transition={{ duration: 0.6 }}
         >
           <span className="inline-block rounded-full bg-brand/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-brand ring-1 ring-brand/20">
-            Error 404
+            {t.notFound.badge}
           </span>
           
           <h1 className="mt-8 text-8xl font-black tracking-tighter text-foreground sm:text-[12rem]">
-            LOST<span className="text-brand">.</span>
+            {t.notFound.title}<span className="text-brand">.</span>
           </h1>
           
           <h2 className="mt-4 text-2xl font-bold text-foreground sm:text-4xl">
-            You've ventured into the void.
+            {t.notFound.heading}
           </h2>
           
           <p className="mx-auto mt-6 max-w-md text-lg leading-relaxed text-muted-foreground">
-            The page you're looking for has either drifted into another dimension or never existed in this one.
+            {t.notFound.body}
           </p>
           
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -51,14 +52,14 @@ function NotFoundComponent() {
               className="group flex w-full items-center justify-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-all hover:scale-105 active:scale-95 sm:w-auto"
             >
               <Home className="h-4 w-4" />
-              Back to Base
+              {t.notFound.backToBase}
             </Link>
             <button
               onClick={() => window.history.back()}
               className="flex w-full items-center justify-center gap-2 rounded-full border border-border bg-background/50 px-8 py-4 text-sm font-bold text-foreground backdrop-blur-sm transition-all hover:bg-secondary sm:w-auto"
             >
               <ArrowLeft className="h-4 w-4" />
-              Go Back
+              {t.notFound.goBack}
             </button>
           </div>
         </motion.div>
@@ -70,16 +71,16 @@ function NotFoundComponent() {
           className="mt-20 flex justify-center gap-8 border-t border-border/50 pt-10"
         >
           <div className="text-left">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Studio</p>
-            <Link to="/about" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">About Us</Link>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t.notFound.studio}</p>
+            <Link to="/about" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">{t.notFound.aboutUs}</Link>
           </div>
           <div className="text-left">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Support</p>
-            <Link to="/faq" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">Help Center</Link>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t.notFound.support}</p>
+            <Link to="/faq" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">{t.notFound.helpCenter}</Link>
           </div>
           <div className="text-left">
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Contact</p>
-            <Link to="/contact" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">Get in Touch</Link>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{t.notFound.contact}</p>
+            <Link to="/contact" className="mt-1 block text-sm font-medium hover:text-brand transition-colors">{t.notFound.getInTouch}</Link>
           </div>
         </motion.div>
       </div>
@@ -90,6 +91,7 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { t } = useI18n();
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -98,10 +100,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+          {t.errorPage.title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {t.errorPage.body}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -117,7 +119,7 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent"
           >
-            Go home
+            {t.errorPage.goHome}
           </a>
         </div>
       </div>
