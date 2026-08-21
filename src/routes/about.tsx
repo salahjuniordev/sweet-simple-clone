@@ -112,7 +112,8 @@ function AboutPage() {
               {about.ctaTitlePrefix}<span className="text-brand">{about.ctaTitleHighlight}</span>{about.ctaTitleSuffix}
             </h2>
             <Link
-              to="/contact"
+              to="/start-a-project"
+              search={{ service: undefined }}
               className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
             >
               {about.ctaButton} <ArrowUpRight className="h-4 w-4" />

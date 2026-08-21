@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as StartAProjectRouteImport } from './routes/start-a-project'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as ThankYouRouteImport } from './routes/thank-you'
 import { Route as AdminAdminRouteImport } from './routes/_admin/admin'
@@ -70,6 +71,11 @@ const PricingRoute = PricingRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartAProjectRoute = StartAProjectRouteImport.update({
+  id: '/start-a-project',
+  path: '/start-a-project',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TermsRoute = TermsRouteImport.update({
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start-a-project': typeof StartAProjectRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/admin': typeof AdminAdminRouteWithChildren
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start-a-project': typeof StartAProjectRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/auth/callback': typeof AuthCallbackRoute
@@ -244,6 +252,7 @@ export interface FileRoutesById {
   '/faq': typeof FaqRoute
   '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
+  '/start-a-project': typeof StartAProjectRoute
   '/terms': typeof TermsRoute
   '/thank-you': typeof ThankYouRoute
   '/_admin/admin': typeof AdminAdminRouteWithChildren
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
+    | '/start-a-project'
     | '/terms'
     | '/thank-you'
     | '/admin'
@@ -304,6 +314,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
+    | '/start-a-project'
     | '/terms'
     | '/thank-you'
     | '/auth/callback'
@@ -333,6 +344,7 @@ export interface FileRouteTypes {
     | '/faq'
     | '/pricing'
     | '/privacy'
+    | '/start-a-project'
     | '/terms'
     | '/thank-you'
     | '/_admin/admin'
@@ -364,6 +376,7 @@ export interface RootRouteChildren {
   FaqRoute: typeof FaqRoute
   PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
+  StartAProjectRoute: typeof StartAProjectRoute
   TermsRoute: typeof TermsRoute
   ThankYouRoute: typeof ThankYouRoute
   AuthCallbackRoute: typeof AuthCallbackRoute
@@ -427,6 +440,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start-a-project': {
+      id: '/start-a-project'
+      path: '/start-a-project'
+      fullPath: '/start-a-project'
+      preLoaderRoute: typeof StartAProjectRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/terms': {
@@ -625,6 +645,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaqRoute: FaqRoute,
   PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
+  StartAProjectRoute: StartAProjectRoute,
   TermsRoute: TermsRoute,
   ThankYouRoute: ThankYouRoute,
   AuthCallbackRoute: AuthCallbackRoute,

@@ -110,6 +110,7 @@ export const publicEn = {
     customTitleB: "what you need?",
     customText:
       "We offer custom retainers and project-based pricing for complex requirements. Let's hop on a call and build a custom package for you.",
+    startProject: "Start a Project",
     bookCall: "Book a Strategy Call",
     otherServices: "Other services",
     notFoundTitle: "We don't offer that service",
@@ -264,6 +265,7 @@ export const publicFr: typeof publicEn = {
     customTitleB: "ce qu'il vous faut ?",
     customText:
       "Nous proposons des forfaits sur mesure et une tarification au projet pour les besoins complexes. Réservons un appel et construisons votre offre.",
+    startProject: "Démarrer un projet",
     bookCall: "Réserver un appel stratégique",
     otherServices: "Autres services",
     notFoundTitle: "Nous ne proposons pas ce service",

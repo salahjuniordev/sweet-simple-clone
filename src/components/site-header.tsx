@@ -44,7 +44,8 @@ export function SiteHeader() {
           <LanguageToggle />
 
           <Link
-            to="/contact"
+            to="/start-a-project"
+            search={{ service: undefined }}
             className="hidden rounded-full bg-primary px-4 py-2.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-brand hover:text-brand-foreground sm:inline-flex sm:px-5 sm:text-sm"
           >
             {t.nav.contact}
@@ -94,7 +95,8 @@ export function SiteHeader() {
 
                 <SheetClose asChild>
                   <Link
-                    to="/contact"
+                    to="/start-a-project"
+                    search={{ service: undefined }}
                     className="rounded-full bg-brand px-6 py-3.5 text-center text-sm font-bold text-brand-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
                   >
                     {t.nav.contact}

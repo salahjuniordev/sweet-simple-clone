@@ -182,7 +182,8 @@ function Index() {
               </p>
             </div>
             <Link
-              to="/contact"
+              to="/start-a-project"
+              search={{ service: undefined }}
               className="inline-flex shrink-0 items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
             >
               {t.home.ctaButton} <ArrowUpRight className="h-4 w-4" />
@@ -340,17 +341,18 @@ function Index() {
             </p>
             <div className="mt-9 flex flex-wrap justify-center gap-3">
               <Link
-                to="/contact"
+                to="/start-a-project"
+                search={{ service: undefined }}
                 className="inline-flex items-center gap-2 rounded-full bg-brand px-8 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
               >
                 {t.home.startProject} <ArrowUpRight className="h-4 w-4" />
               </Link>
-              <a
-                href="mailto:hello@mariostudio.com"
+              <Link
+                to="/contact"
                 className="inline-flex items-center rounded-full border border-primary-foreground/30 px-8 py-4 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
               >
-                hello@mariostudio.com
-              </a>
+                {t.nav.contactAlt}
+              </Link>
             </div>
           </div>
         </section>

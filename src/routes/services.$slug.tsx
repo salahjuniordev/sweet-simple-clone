@@ -1,5 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowUpRight, Check, Sparkles } from "lucide-react";
+import { ArrowUpRight, Check, Sparkles, Rocket } from "lucide-react";
 import { getServiceBySlug, getServices } from "@/lib/cms-queries";
 import { serviceIcons } from "@/lib/service-icons";
 import {
@@ -148,12 +148,21 @@ function ServiceDetail() {
               </h1>
               <p className="mt-4 text-xl font-bold text-brand">{service.tagline}</p>
               <p className="mt-5 max-w-2xl text-lg text-muted-foreground">{service.intro}</p>
-              <a
-                href="#quote"
-                className="mt-9 inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
-              >
-                {t.serviceDetail.requestQuote} <ArrowUpRight className="h-4 w-4" />
-              </a>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Link
+                  to="/start-a-project"
+                  search={{ service: service.slug }}
+                  className="inline-flex items-center gap-2 rounded-full bg-brand px-7 py-3.5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
+                >
+                  {t.serviceDetail.startProject} <ArrowUpRight className="h-4 w-4" />
+                </Link>
+                <a
+                  href="#quote"
+                  className="inline-flex items-center gap-2 rounded-full border border-border px-7 py-3.5 text-sm font-bold transition-colors hover:border-brand hover:text-brand"
+                >
+                  {t.serviceDetail.requestQuote}
+                </a>
+              </div>
             </ScrollReveal>
           </div>
         </section>
@@ -252,9 +261,18 @@ function ServiceDetail() {
                 </div>
               </ScrollReveal>
 
-              <ScrollReveal direction="right">
-                <LeadCaptureForm serviceSlug={service.slug} tier={selectedTier} />
-              </ScrollReveal>
+              <div className="space-y-4">
+                <Link
+                  to="/start-a-project"
+                  search={{ service: service.slug }}
+                  className="flex items-center justify-center gap-2 rounded-full bg-brand px-7 py-4 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
+                >
+                  {t.serviceDetail.startProject} <ArrowUpRight className="h-4 w-4" />
+                </Link>
+                <ScrollReveal direction="right">
+                  <LeadCaptureForm serviceSlug={service.slug} tier={selectedTier} />
+                </ScrollReveal>
+              </div>
             </div>
           </div>
         </section>
@@ -314,12 +332,21 @@ function ServiceDetail() {
             <p className="mx-auto mt-4 max-w-xl opacity-80">
               {t.serviceDetail.customText}
             </p>
-            <Link
-              to="/contact"
-              className="mt-10 inline-flex items-center gap-2 rounded-full bg-brand px-10 py-5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
-            >
-              {t.serviceDetail.bookCall} <ArrowUpRight className="h-4 w-4" />
-            </Link>
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              <Link
+                to="/start-a-project"
+                search={{ service: service.slug }}
+                className="inline-flex items-center gap-2 rounded-full bg-brand px-10 py-5 text-sm font-bold text-brand-foreground transition-transform hover:-translate-y-0.5"
+              >
+                {t.serviceDetail.startProject} <ArrowUpRight className="h-4 w-4" />
+              </Link>
+              <Link
+                to="/contact"
+                className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/30 px-10 py-5 text-sm font-semibold transition-colors hover:border-brand hover:text-brand"
+              >
+                {t.serviceDetail.bookCall}
+              </Link>
+            </div>
           </div>
         </section>
 
