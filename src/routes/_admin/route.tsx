@@ -69,6 +69,7 @@ function AdminLayout() {
             <AdminNavLink to="/admin/services" label={t.admin.nav.services} />
             <AdminNavLink to="/admin/analytics" label={t.admin.nav.analytics} />
             <AdminNavLink to="/admin/projects" label={t.admin.nav.projects || "Projects"} />
+            <AdminNavLink to="/admin/questions" label={t.admin.nav.questions || "Questions"} />
             <AdminNavLink to="/admin/leads" label={t.admin.nav.leads} />
             <AdminNavLink to="/admin/blog" label={t.admin.nav.blog} />
             <AdminNavLink to="/admin/work" label={t.admin.nav.work} />

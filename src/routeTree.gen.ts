@@ -34,6 +34,7 @@ import { Route as AdminAdminAnalyticsRouteImport } from './routes/_admin/admin.a
 import { Route as AdminAdminBlogRouteImport } from './routes/_admin/admin.blog'
 import { Route as AdminAdminLeadsRouteImport } from './routes/_admin/admin.leads'
 import { Route as AdminAdminProjectsRouteImport } from './routes/_admin/admin.projects'
+import { Route as AdminAdminQuestionsRouteImport } from './routes/_admin/admin.questions'
 import { Route as AdminAdminRolesRouteImport } from './routes/_admin/admin.roles'
 import { Route as AdminAdminServicesRouteImport } from './routes/_admin/admin.services'
 import { Route as AdminAdminSignupRouteImport } from './routes/_admin/admin.signup'
@@ -165,6 +166,11 @@ const AdminAdminProjectsRoute = AdminAdminProjectsRouteImport.update({
   path: '/projects',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminQuestionsRoute = AdminAdminQuestionsRouteImport.update({
+  id: '/questions',
+  path: '/questions',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminRolesRoute = AdminAdminRolesRouteImport.update({
   id: '/roles',
   path: '/roles',
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/leads': typeof AdminAdminLeadsRoute
   '/admin/projects': typeof AdminAdminProjectsRouteWithChildren
+  '/admin/questions': typeof AdminAdminQuestionsRoute
   '/admin/roles': typeof AdminAdminRolesRoute
   '/admin/services': typeof AdminAdminServicesRoute
   '/admin/signup': typeof AdminAdminSignupRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/leads': typeof AdminAdminLeadsRoute
   '/admin/projects': typeof AdminAdminProjectsRouteWithChildren
+  '/admin/questions': typeof AdminAdminQuestionsRoute
   '/admin/roles': typeof AdminAdminRolesRoute
   '/admin/services': typeof AdminAdminServicesRoute
   '/admin/signup': typeof AdminAdminSignupRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/_admin/admin/blog': typeof AdminAdminBlogRoute
   '/_admin/admin/leads': typeof AdminAdminLeadsRoute
   '/_admin/admin/projects': typeof AdminAdminProjectsRouteWithChildren
+  '/_admin/admin/questions': typeof AdminAdminQuestionsRoute
   '/_admin/admin/roles': typeof AdminAdminRolesRoute
   '/_admin/admin/services': typeof AdminAdminServicesRoute
   '/_admin/admin/signup': typeof AdminAdminSignupRoute
@@ -320,6 +329,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/leads'
     | '/admin/projects'
+    | '/admin/questions'
     | '/admin/roles'
     | '/admin/services'
     | '/admin/signup'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/admin/blog'
     | '/admin/leads'
     | '/admin/projects'
+    | '/admin/questions'
     | '/admin/roles'
     | '/admin/services'
     | '/admin/signup'
@@ -384,6 +395,7 @@ export interface FileRouteTypes {
     | '/_admin/admin/blog'
     | '/_admin/admin/leads'
     | '/_admin/admin/projects'
+    | '/_admin/admin/questions'
     | '/_admin/admin/roles'
     | '/_admin/admin/services'
     | '/_admin/admin/signup'
@@ -593,6 +605,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminProjectsRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/questions': {
+      id: '/_admin/admin/questions'
+      path: '/questions'
+      fullPath: '/admin/questions'
+      preLoaderRoute: typeof AdminAdminQuestionsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/roles': {
       id: '/_admin/admin/roles'
       path: '/roles'
@@ -654,6 +673,7 @@ interface AdminAdminRouteChildren {
   AdminAdminBlogRoute: typeof AdminAdminBlogRoute
   AdminAdminLeadsRoute: typeof AdminAdminLeadsRoute
   AdminAdminProjectsRoute: typeof AdminAdminProjectsRouteWithChildren
+  AdminAdminQuestionsRoute: typeof AdminAdminQuestionsRoute
   AdminAdminRolesRoute: typeof AdminAdminRolesRoute
   AdminAdminServicesRoute: typeof AdminAdminServicesRoute
   AdminAdminSignupRoute: typeof AdminAdminSignupRoute
@@ -666,6 +686,7 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminBlogRoute: AdminAdminBlogRoute,
   AdminAdminLeadsRoute: AdminAdminLeadsRoute,
   AdminAdminProjectsRoute: AdminAdminProjectsRouteWithChildren,
+  AdminAdminQuestionsRoute: AdminAdminQuestionsRoute,
   AdminAdminRolesRoute: AdminAdminRolesRoute,
   AdminAdminServicesRoute: AdminAdminServicesRoute,
   AdminAdminSignupRoute: AdminAdminSignupRoute,

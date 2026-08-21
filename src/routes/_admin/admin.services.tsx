@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -30,12 +31,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, Loader2, Save, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Plus, Edit, Trash2, Loader2, Save, X, GripVertical, ArrowUp, ArrowDown } from "lucide-react";
 import { toast } from "sonner";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useI18n } from "@/lib/i18n";
+import { toggleServiceActive, updateServiceSortOrder } from "@/lib/service-management.functions"
 
 const planSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -335,6 +338,7 @@ function AdminServices() {
               <TableHead>{t.admin.services.tableSlug}</TableHead>
               <TableHead>{t.admin.services.tableIcon}</TableHead>
               <TableHead>Prices</TableHead>
+              <TableHead>Active</TableHead>
               <TableHead className="text-right">{t.admin.services.tableActions}</TableHead>
             </TableRow>
           </TableHeader>
@@ -347,8 +351,16 @@ function AdminServices() {
                 <TableCell>
                   <PriceEditor service={s} />
                 </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={(s as any).is_active !== false}
+                    onCheckedChange={(checked) => {
+                      toggleServiceActive({ data: { id: s.id, isActive: checked } });
+                      queryClient.invalidateQueries({ queryKey: ["admin-services"] });
+                    }}
+                  />
+                </TableCell>
                 <TableCell className="text-right">
-
                   <div className="flex justify-end gap-2">
                     <Button variant="ghost" size="icon" onClick={() => {
                       setEditingService(s);

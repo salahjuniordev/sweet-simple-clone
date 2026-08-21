@@ -103,8 +103,48 @@ CREATE POLICY "Authenticated can delete project requests" ON project_requests
   FOR DELETE USING (auth.role() = 'authenticated');
 `;
 
+const SERVICE_QUESTIONS_SQL = `
+-- Add is_active column to cms_services if it does not exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'cms_services' AND column_name = 'is_active'
+  ) THEN
+    ALTER TABLE cms_services ADD COLUMN is_active BOOLEAN DEFAULT true NOT NULL;
+  END IF;
+END
+$$;
+
+-- Service intake questions table
+CREATE TABLE IF NOT EXISTS service_questions (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  service_slug TEXT NOT NULL,
+  key TEXT NOT NULL,
+  label TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'text',
+  required BOOLEAN DEFAULT false NOT NULL,
+  placeholder TEXT,
+  options JSONB DEFAULT '[]'::jsonb,
+  description TEXT,
+  sort_order INTEGER DEFAULT 0 NOT NULL,
+  condition_key TEXT,
+  condition_value TEXT,
+  created_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now() NOT NULL,
+  UNIQUE(service_slug, key)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sq_service ON service_questions(service_slug);
+
+ALTER TABLE service_questions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Public can read service questions" ON service_questions FOR SELECT USING (true);
+CREATE POLICY "Authenticated can manage service questions" ON service_questions FOR ALL USING (auth.role() = 'authenticated');
+`;
+
 let migrationStatus: "pending" | "done" | "failed" = "pending";
 let blogImageStatus: "pending" | "done" | "failed" = "pending";
+let serviceQuestionsStatus: "pending" | "done" | "failed" = "pending";
 
 /**
  * Attempts to run the project_requests migration automatically.
@@ -152,6 +192,8 @@ export async function ensureProjectRequestTables(): Promise<{
 
     if (!error) {
       migrationStatus = "done";
+      // After project tables exist, also try service questions
+      await ensureServiceQuestionsTable();
       return { alreadyExists: true, created: false };
     }
 
@@ -185,6 +227,7 @@ export async function ensureProjectRequestTables(): Promise<{
     if (response.ok) {
       migrationStatus = "done";
       console.log("[Migration] Project request tables created successfully");
+      await ensureServiceQuestionsTable();
       return { alreadyExists: false, created: true };
     }
 
@@ -249,5 +292,40 @@ async function ensureBlogImageColumn(): Promise<void> {
   } catch (err) {
     console.warn("[Migration] Blog image column check skipped:", err instanceof Error ? err.message : "unknown");
     blogImageStatus = "failed";
+  }
+}
+
+/**
+ * Ensures the service_questions table and is_active column on cms_services exist.
+ */
+async function ensureServiceQuestionsTable(): Promise<void> {
+  if (serviceQuestionsStatus === "done" || serviceQuestionsStatus === "failed") return;
+
+  const SUPABASE_URL = process.env["SUPABASE_URL"];
+  const SERVICE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  if (!SUPABASE_URL || !SERVICE_KEY) return;
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/sql`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SERVICE_KEY}`,
+        "Content-Type": "application/json",
+        apikey: SERVICE_KEY,
+      },
+      body: JSON.stringify({ query: SERVICE_QUESTIONS_SQL }),
+    });
+
+    if (response.ok) {
+      serviceQuestionsStatus = "done";
+      console.log("[Migration] Service questions table and is_active column ensured");
+    } else {
+      const text = await response.text();
+      console.warn("[Migration] Service questions migration failed:", text.substring(0, 200));
+      serviceQuestionsStatus = "failed";
+    }
+  } catch (err) {
+    console.warn("[Migration] Service questions migration skipped:", err instanceof Error ? err.message : "unknown");
+    serviceQuestionsStatus = "failed";
   }
 }

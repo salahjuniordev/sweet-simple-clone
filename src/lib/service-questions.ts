@@ -11,6 +11,8 @@ export type IntakeQuestion = {
   placeholder?: string;
   options?: string[];
   description?: string;
+  conditionKey?: string;
+  conditionValue?: string;
 };
 
 export const serviceQuestions: Record<string, IntakeQuestion[]> = {
@@ -199,12 +201,12 @@ export const serviceQuestions: Record<string, IntakeQuestion[]> = {
   ],
 };
 
-/** Get intake questions for a given service slug */
+/** Get intake questions for a given service slug (hardcoded fallback) */
 export function getQuestionsForService(slug: string): IntakeQuestion[] {
   return serviceQuestions[slug] || [];
 }
 
-/** Get all questions for multiple selected services */
+/** Get all questions for multiple selected services (hardcoded fallback) */
 export function getQuestionsForServices(slugs: string[]): Record<string, IntakeQuestion[]> {
   const result: Record<string, IntakeQuestion[]> = {};
   for (const slug of slugs) {
@@ -214,4 +216,27 @@ export function getQuestionsForServices(slugs: string[]): Record<string, IntakeQ
     }
   }
   return result;
+}
+
+/** Check if a question should be visible based on current answers and conditional rules */
+export function isQuestionVisible(
+  question: IntakeQuestion,
+  allAnswers: Record<string, Record<string, unknown>>,
+  serviceSlug: string
+): boolean {
+  if (!question.conditionKey || !question.conditionValue) return true;
+
+  // Look for the condition source question's answer in any service's answers
+  for (const slug of Object.keys(allAnswers)) {
+    const serviceAnswers = allAnswers[slug] || {};
+    const sourceAnswer = serviceAnswers[question.conditionKey];
+    if (sourceAnswer !== undefined) {
+      if (Array.isArray(sourceAnswer)) {
+        return sourceAnswer.includes(question.conditionValue);
+      }
+      return String(sourceAnswer) === question.conditionValue;
+    }
+  }
+
+  return false;
 }

@@ -1,11 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useState, useCallback, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowUpRight, ArrowLeft, Check, Upload, X, FileText, Loader2 } from "lucide-react";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { useI18n } from "@/lib/i18n";
 import { services, type Service } from "@/lib/services-data";
-import { getQuestionsForServices, type IntakeQuestion } from "@/lib/service-questions";
+import { getQuestionsForServices, isQuestionVisible, type IntakeQuestion } from "@/lib/service-questions";
 import { submitProjectRequest } from "@/lib/project-requests.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -121,7 +122,49 @@ function StartAProject() {
   const selectedServicesData = allServices.filter((s) =>
     formData.selectedServices.includes(s.slug)
   );
-  const serviceQuestionsMap = getQuestionsForServices(formData.selectedServices);
+
+  // Fetch DB questions for all selected services, fallback to hardcoded
+  const { data: dbQuestionsRaw } = useQuery({
+    queryKey: ["intake-questions", ...formData.selectedServices].sort(),
+    queryFn: async () => {
+      if (formData.selectedServices.length === 0) return [];
+      const { data } = await supabase
+        .from("service_questions" as any)
+        .select("*")
+        .in("service_slug", formData.selectedServices)
+        .order("sort_order");
+      return (data || []) as any[];
+    },
+    staleTime: 5 * 60 * 1000,
+    enabled: formData.selectedServices.length > 0,
+  });
+
+  // Build DB questions map
+  const dbQuestionsMap: Record<string, IntakeQuestion[]> = {};
+  if (dbQuestionsRaw && dbQuestionsRaw.length > 0) {
+    for (const q of dbQuestionsRaw) {
+      const slug = q.service_slug;
+      if (!dbQuestionsMap[slug]) dbQuestionsMap[slug] = [];
+      dbQuestionsMap[slug].push({
+        key: q.key,
+        label: q.label,
+        type: q.type,
+        required: q.required,
+        placeholder: q.placeholder || undefined,
+        options: q.options || [],
+        description: q.description || undefined,
+        conditionKey: q.condition_key || undefined,
+        conditionValue: q.condition_value || undefined,
+      });
+    }
+  }
+
+  // Merge: DB questions take priority, fall back to hardcoded
+  const hardcodedMap = getQuestionsForServices(formData.selectedServices);
+  const serviceQuestionsMap: Record<string, IntakeQuestion[]> = {};
+  for (const slug of formData.selectedServices) {
+    serviceQuestionsMap[slug] = dbQuestionsMap[slug] || hardcodedMap[slug] || [];
+  }
 
   const steps = [
     intake.stepServices,
@@ -545,11 +588,16 @@ function StartAProject() {
 
               {Object.entries(serviceQuestionsMap).map(([slug, questions]) => {
                 const serviceData = allServices.find((s) => s.slug === slug);
+                // Filter questions by conditional visibility
+                const visibleQuestions = questions.filter((q) =>
+                  isQuestionVisible(q, formData.serviceAnswers, slug)
+                );
+                if (visibleQuestions.length === 0) return null;
                 return (
                   <div key={slug} className="mt-10">
                     <h2 className="text-xl font-bold text-brand">{serviceData?.title || slug}</h2>
                     <div className="mt-4 grid gap-5">
-                      {questions.map((q) => (
+                      {visibleQuestions.map((q) => (
                         <ServiceQuestionField
                           key={q.key}
                           question={q}
