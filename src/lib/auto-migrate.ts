@@ -4,6 +4,20 @@
  * to create tables on first use in production.
  */
 
+const BLOG_IMAGE_SQL = `
+-- Add image column to cms_posts if it does not exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_name = 'cms_posts' AND column_name = 'image'
+  ) THEN
+    ALTER TABLE cms_posts ADD COLUMN image TEXT;
+  END IF;
+END
+$$;
+`;
+
 const MIGRATION_SQL = `
 -- Project requests (main intake submissions)
 CREATE TABLE IF NOT EXISTS project_requests (
@@ -90,6 +104,7 @@ CREATE POLICY "Authenticated can delete project requests" ON project_requests
 `;
 
 let migrationStatus: "pending" | "done" | "failed" = "pending";
+let blogImageStatus: "pending" | "done" | "failed" = "pending";
 
 /**
  * Attempts to run the project_requests migration automatically.
@@ -100,7 +115,11 @@ export async function ensureProjectRequestTables(): Promise<{
   created: boolean;
   error?: string;
 }> {
-  if (migrationStatus === "done") return { alreadyExists: true, created: false };
+  if (migrationStatus === "done") {
+    // Even if project tables exist, still try to add blog image column
+    await ensureBlogImageColumn();
+    return { alreadyExists: true, created: false };
+  }
   if (migrationStatus === "failed") {
     return {
       alreadyExists: false,
@@ -195,5 +214,40 @@ export async function ensureProjectRequestTables(): Promise<{
       created: false,
       error: `Migration failed: ${err instanceof Error ? err.message : "unknown"}`,
     };
+  }
+}
+
+/**
+ * Adds an `image` column to cms_posts if it doesn't already exist.
+ */
+async function ensureBlogImageColumn(): Promise<void> {
+  if (blogImageStatus === "done" || blogImageStatus === "failed") return;
+
+  const SUPABASE_URL = process.env["SUPABASE_URL"];
+  const SERVICE_KEY = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+  if (!SUPABASE_URL || !SERVICE_KEY) return;
+
+  try {
+    const response = await fetch(`${SUPABASE_URL}/sql`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SERVICE_KEY}`,
+        "Content-Type": "application/json",
+        apikey: SERVICE_KEY,
+      },
+      body: JSON.stringify({ query: BLOG_IMAGE_SQL }),
+    });
+
+    if (response.ok) {
+      blogImageStatus = "done";
+      console.log("[Migration] Blog image column ensured on cms_posts");
+    } else {
+      const text = await response.text();
+      console.warn("[Migration] Blog image column check failed:", text.substring(0, 200));
+      blogImageStatus = "failed";
+    }
+  } catch (err) {
+    console.warn("[Migration] Blog image column check skipped:", err instanceof Error ? err.message : "unknown");
+    blogImageStatus = "failed";
   }
 }
