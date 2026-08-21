@@ -226,6 +226,97 @@ export const getProjectRequest = createServerFn({ method: "GET" })
     return project;
   });
 
+/** Assign a team member to a project request (admin) */
+export const assignProjectRequest = createServerFn({ method: "POST" })
+  .inputValidator((data) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        assignedTo: z.string().nullable(),
+      })
+      .parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    const { error } = await supabaseAdmin
+      .from("project_requests" as any)
+      .update({ assigned_to: data.assignedTo, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+
+    if (error) throw error;
+
+    await supabaseAdmin.from("project_activity" as any).insert({
+      project_request_id: data.id,
+      actor: "admin",
+      action: "assigned",
+      details: data.assignedTo ? `Assigned to ${data.assignedTo}` : "Unassigned",
+    } as any);
+
+    return { success: true };
+  });
+
+/** Add an internal note to a project request (admin) */
+export const addProjectNote = createServerFn({ method: "POST" })
+  .inputValidator((data) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        note: z.string().trim().min(1).max(5000),
+      })
+      .parse(data)
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    // Append to internal_notes
+    const { data: existing } = await supabaseAdmin
+      .from("project_requests" as any)
+      .select("internal_notes")
+      .eq("id", data.id)
+      .single();
+
+    const timestamp = new Date().toLocaleString("en-CA", { hour12: false });
+    const newNote = `\n\n[${timestamp}] ${data.note}`;
+    const updatedNotes = ((existing as any)?.internal_notes || "") + newNote;
+
+    const { error } = await supabaseAdmin
+      .from("project_requests" as any)
+      .update({ internal_notes: updatedNotes, updated_at: new Date().toISOString() })
+      .eq("id", data.id);
+
+    if (error) throw error;
+
+    await supabaseAdmin.from("project_activity" as any).insert({
+      project_request_id: data.id,
+      actor: "admin",
+      action: "note_added",
+      details: data.note.substring(0, 200),
+    } as any);
+
+    return { success: true };
+  });
+
+/** Fetch all team members (users with roles) for assignment dropdown */
+export const getTeamMembers = createServerFn({ method: "GET" })
+  .handler(async () => {
+    const { supabaseAdmin } = await import(
+      "@/integrations/supabase/client.server"
+    );
+
+    const { data, error } = await supabaseAdmin
+      .from("user_roles" as any)
+      .select("user_id, role")
+      .in("role", ["admin", "editor"]);
+
+    if (error) return [];
+    return data || [];
+  });
+
 /** Update project request status (admin) */
 export const updateProjectRequestStatus = createServerFn({ method: "POST" })
   .inputValidator((data) =>

@@ -33,11 +33,13 @@ import { Route as AdminAdminIndexRouteImport } from './routes/_admin/admin.index
 import { Route as AdminAdminAnalyticsRouteImport } from './routes/_admin/admin.analytics'
 import { Route as AdminAdminBlogRouteImport } from './routes/_admin/admin.blog'
 import { Route as AdminAdminLeadsRouteImport } from './routes/_admin/admin.leads'
+import { Route as AdminAdminProjectsRouteImport } from './routes/_admin/admin.projects'
 import { Route as AdminAdminRolesRouteImport } from './routes/_admin/admin.roles'
 import { Route as AdminAdminServicesRouteImport } from './routes/_admin/admin.services'
 import { Route as AdminAdminSignupRouteImport } from './routes/_admin/admin.signup'
 import { Route as AdminAdminWorkRouteImport } from './routes/_admin/admin.work'
 import { Route as ApiPublicSitemapDotxmlRouteImport } from './routes/api/public/sitemap[.]xml'
+import { Route as AdminAdminProjectsReferenceRouteImport } from './routes/_admin/admin.projects.$reference'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -158,6 +160,11 @@ const AdminAdminLeadsRoute = AdminAdminLeadsRouteImport.update({
   path: '/leads',
   getParentRoute: () => AdminAdminRoute,
 } as any)
+const AdminAdminProjectsRoute = AdminAdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => AdminAdminRoute,
+} as any)
 const AdminAdminRolesRoute = AdminAdminRolesRouteImport.update({
   id: '/roles',
   path: '/roles',
@@ -183,6 +190,12 @@ const ApiPublicSitemapDotxmlRoute = ApiPublicSitemapDotxmlRouteImport.update({
   path: '/api/public/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminAdminProjectsReferenceRoute =
+  AdminAdminProjectsReferenceRouteImport.update({
+    id: '/$reference',
+    path: '/$reference',
+    getParentRoute: () => AdminAdminProjectsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -207,12 +220,14 @@ export interface FileRoutesByFullPath {
   '/admin/analytics': typeof AdminAdminAnalyticsRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/leads': typeof AdminAdminLeadsRoute
+  '/admin/projects': typeof AdminAdminProjectsRouteWithChildren
   '/admin/roles': typeof AdminAdminRolesRoute
   '/admin/services': typeof AdminAdminServicesRoute
   '/admin/signup': typeof AdminAdminSignupRoute
   '/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin/': typeof AdminAdminIndexRoute
+  '/admin/projects/$reference': typeof AdminAdminProjectsReferenceRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -236,12 +251,14 @@ export interface FileRoutesByTo {
   '/admin/analytics': typeof AdminAdminAnalyticsRoute
   '/admin/blog': typeof AdminAdminBlogRoute
   '/admin/leads': typeof AdminAdminLeadsRoute
+  '/admin/projects': typeof AdminAdminProjectsRouteWithChildren
   '/admin/roles': typeof AdminAdminRolesRoute
   '/admin/services': typeof AdminAdminServicesRoute
   '/admin/signup': typeof AdminAdminSignupRoute
   '/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/admin': typeof AdminAdminIndexRoute
+  '/admin/projects/$reference': typeof AdminAdminProjectsReferenceRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -268,12 +285,14 @@ export interface FileRoutesById {
   '/_admin/admin/analytics': typeof AdminAdminAnalyticsRoute
   '/_admin/admin/blog': typeof AdminAdminBlogRoute
   '/_admin/admin/leads': typeof AdminAdminLeadsRoute
+  '/_admin/admin/projects': typeof AdminAdminProjectsRouteWithChildren
   '/_admin/admin/roles': typeof AdminAdminRolesRoute
   '/_admin/admin/services': typeof AdminAdminServicesRoute
   '/_admin/admin/signup': typeof AdminAdminSignupRoute
   '/_admin/admin/work': typeof AdminAdminWorkRoute
   '/api/public/sitemap.xml': typeof ApiPublicSitemapDotxmlRoute
   '/_admin/admin/': typeof AdminAdminIndexRoute
+  '/_admin/admin/projects/$reference': typeof AdminAdminProjectsReferenceRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -300,12 +319,14 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/blog'
     | '/admin/leads'
+    | '/admin/projects'
     | '/admin/roles'
     | '/admin/services'
     | '/admin/signup'
     | '/admin/work'
     | '/api/public/sitemap.xml'
     | '/admin/'
+    | '/admin/projects/$reference'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -329,12 +350,14 @@ export interface FileRouteTypes {
     | '/admin/analytics'
     | '/admin/blog'
     | '/admin/leads'
+    | '/admin/projects'
     | '/admin/roles'
     | '/admin/services'
     | '/admin/signup'
     | '/admin/work'
     | '/api/public/sitemap.xml'
     | '/admin'
+    | '/admin/projects/$reference'
   id:
     | '__root__'
     | '/'
@@ -360,12 +383,14 @@ export interface FileRouteTypes {
     | '/_admin/admin/analytics'
     | '/_admin/admin/blog'
     | '/_admin/admin/leads'
+    | '/_admin/admin/projects'
     | '/_admin/admin/roles'
     | '/_admin/admin/services'
     | '/_admin/admin/signup'
     | '/_admin/admin/work'
     | '/api/public/sitemap.xml'
     | '/_admin/admin/'
+    | '/_admin/admin/projects/$reference'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -561,6 +586,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAdminLeadsRouteImport
       parentRoute: typeof AdminAdminRoute
     }
+    '/_admin/admin/projects': {
+      id: '/_admin/admin/projects'
+      path: '/projects'
+      fullPath: '/admin/projects'
+      preLoaderRoute: typeof AdminAdminProjectsRouteImport
+      parentRoute: typeof AdminAdminRoute
+    }
     '/_admin/admin/roles': {
       id: '/_admin/admin/roles'
       path: '/roles'
@@ -596,13 +628,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_admin/admin/projects/$reference': {
+      id: '/_admin/admin/projects/$reference'
+      path: '/$reference'
+      fullPath: '/admin/projects/$reference'
+      preLoaderRoute: typeof AdminAdminProjectsReferenceRouteImport
+      parentRoute: typeof AdminAdminProjectsRoute
+    }
   }
 }
+
+interface AdminAdminProjectsRouteChildren {
+  AdminAdminProjectsReferenceRoute: typeof AdminAdminProjectsReferenceRoute
+}
+
+const AdminAdminProjectsRouteChildren: AdminAdminProjectsRouteChildren = {
+  AdminAdminProjectsReferenceRoute: AdminAdminProjectsReferenceRoute,
+}
+
+const AdminAdminProjectsRouteWithChildren =
+  AdminAdminProjectsRoute._addFileChildren(AdminAdminProjectsRouteChildren)
 
 interface AdminAdminRouteChildren {
   AdminAdminAnalyticsRoute: typeof AdminAdminAnalyticsRoute
   AdminAdminBlogRoute: typeof AdminAdminBlogRoute
   AdminAdminLeadsRoute: typeof AdminAdminLeadsRoute
+  AdminAdminProjectsRoute: typeof AdminAdminProjectsRouteWithChildren
   AdminAdminRolesRoute: typeof AdminAdminRolesRoute
   AdminAdminServicesRoute: typeof AdminAdminServicesRoute
   AdminAdminSignupRoute: typeof AdminAdminSignupRoute
@@ -614,6 +665,7 @@ const AdminAdminRouteChildren: AdminAdminRouteChildren = {
   AdminAdminAnalyticsRoute: AdminAdminAnalyticsRoute,
   AdminAdminBlogRoute: AdminAdminBlogRoute,
   AdminAdminLeadsRoute: AdminAdminLeadsRoute,
+  AdminAdminProjectsRoute: AdminAdminProjectsRouteWithChildren,
   AdminAdminRolesRoute: AdminAdminRolesRoute,
   AdminAdminServicesRoute: AdminAdminServicesRoute,
   AdminAdminSignupRoute: AdminAdminSignupRoute,
