@@ -34,6 +34,7 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:type", content: "article" },
         { property: "og:url", content: `https://mariostudio.com/blog/${post.slug}` },
         { property: "article:published_time", content: post.date },
+        { property: "og:image", content: (post as any).image || "https://mariostudio.com/logo.png" },
         { property: "article:author", content: author.name },
         { name: "twitter:card", content: "summary_large_image" },
         {
@@ -118,6 +119,16 @@ function BlogPost() {
           <span>{formatPostDate(post.date)}</span>
           <span>{post.read_time}</span>
         </div>
+        {(post as any).image && (
+          <div className="mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl bg-muted">
+            <img
+              src={(post as any).image}
+              alt={post.title}
+              className="h-full w-full object-cover"
+              loading="eager"
+            />
+          </div>
+        )}
         <h1 className="mt-5 text-4xl font-black leading-tight tracking-tight md:text-5xl">{post.title}</h1>
         <p className="mt-5 text-lg text-muted-foreground">{post.excerpt}</p>
         <div className="mt-10 space-y-6 text-base leading-relaxed">

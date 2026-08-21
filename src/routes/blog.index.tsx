@@ -126,9 +126,19 @@ function BlogIndex() {
                   key={post.slug}
                   to="/blog/$slug"
                   params={{ slug: post.slug }}
-                  className="group flex flex-col justify-between rounded-2xl border border-border p-8 transition-colors hover:border-brand"
+                  className="group flex flex-col justify-between rounded-2xl border border-border overflow-hidden transition-colors hover:border-brand"
                 >
-                  <div>
+                  {(post as any).image && (
+                    <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+                      <img
+                        src={(post as any).image}
+                        alt={post.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
+                  <div className="p-8">
                     <div className="flex items-center gap-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                       <span className="rounded-full bg-brand-soft px-3 py-1 text-brand">{post.category}</span>
                       <span>{formatPostDate(post.date)}</span>
@@ -137,10 +147,10 @@ function BlogIndex() {
                       {post.title}
                     </h2>
                     <p className="mt-3 text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
+                    <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold">
+                      {blogPage.readArticle} <ArrowUpRight className="h-4 w-4" />
+                    </span>
                   </div>
-                  <span className="mt-8 inline-flex items-center gap-2 text-sm font-semibold">
-                    {blogPage.readArticle} <ArrowUpRight className="h-4 w-4" />
-                  </span>
                 </Link>
               ))}
             </div>
