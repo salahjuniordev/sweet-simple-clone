@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useI18n } from "@/lib/i18n";
 
-const WHATSAPP_NUMBER = "1234567890"; // Replace with actual WhatsApp number
+const WHATSAPP_NUMBER = "237696262000";
 
 const messages = {
   en: "Hi Mario Studio! I need help with a project. Can we chat?",
