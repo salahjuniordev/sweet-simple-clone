@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider, useI18n } from "@/lib/i18n";
+import { WhatsAppButton } from "@/components/whatsapp-button";
 
 function NotFoundComponent() {
   const { t } = useI18n();
@@ -217,6 +218,7 @@ function RootShellInner({ children }: { children: ReactNode }) {
       </head>
       <body>
         {children}
+        <WhatsAppButton />
         <Toaster richColors position="top-center" />
         <Scripts />
       </body>
